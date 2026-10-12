@@ -16,8 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun InvitadoHomeScreen() {
-
+fun InvitadoHomeScreen(
+    onNavigateToLogin: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,7 +49,8 @@ fun InvitadoHomeScreen() {
 
         Spacer(modifier = Modifier.height(12.dp))
         Button(
-            onClick = { },
+            onClick = {
+                onNavigateToLogin() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Cerrar sesion")

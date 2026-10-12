@@ -27,6 +27,12 @@ fun AppNavigation() {
             LoginScreen(
                 onNavigateToRegister = {
                     navController.navigate(Routes.REGISTER)
+                },
+                onInvitadoSuccess = {
+                    navController.navigate(Routes.INVITADO_HOME)
+                },
+                onAdminSuccess = {
+                    navController.navigate(Routes.ADMIN_HOME)
                 }
             )
         }
@@ -38,10 +44,19 @@ fun AppNavigation() {
             )
         }
         composable(Routes.INVITADO_HOME) {
-            InvitadoHomeScreen()
+            InvitadoHomeScreen(
+                onNavigateToLogin = {
+                    navController.popBackStack()
+                }
+            )
         }
+
         composable(Routes.ADMIN_HOME) {
-            AdminHomeScreen()
+            AdminHomeScreen(
+                onNavigateToLogin = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

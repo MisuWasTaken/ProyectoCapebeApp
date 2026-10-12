@@ -21,13 +21,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.LoginViewModel
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
+    onInvitadoSuccess: () -> Unit,
+    onAdminSuccess: () -> Unit,
     viewModel: LoginViewModel = viewModel()
 ) {
     val state = viewModel.uiState
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,7 +88,11 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
-                viewModel.onLoginClick()
+                viewModel.onLoginClick(
+                    context = context,
+                    onInvitadoSuccess = onInvitadoSuccess,
+                    onAdminSuccess = onAdminSuccess
+                )
             },
             modifier = Modifier.fillMaxWidth()
         ) {
