@@ -8,12 +8,15 @@ import com.example.proyectocapebeapp.ui.screen.LoginScreen
 import com.example.proyectocapebeapp.ui.screen.RegisterScreen
 import com.example.proyectocapebeapp.ui.screen.AdminHomeScreen
 import com.example.proyectocapebeapp.ui.screen.InvitadoHomeScreen
+import com.example.proyectocapebeapp.ui.screen.CrearJornadaScreen
 
 object Routes {
     const val LOGIN = "login"
     const val REGISTER = "register"
     const val INVITADO_HOME = "invitado_home"
     const val ADMIN_HOME = "admin_home"
+
+    const val CREAR_JORNADA = "crear_jornada"
 }
 
 @Composable
@@ -50,10 +53,19 @@ fun AppNavigation() {
                 }
             )
         }
-
         composable(Routes.ADMIN_HOME) {
             AdminHomeScreen(
                 onNavigateToLogin = {
+                    navController.popBackStack()
+                },
+                onNavigateToCrearJornada = {
+                    navController.navigate(Routes.CREAR_JORNADA)
+                }
+            )
+        }
+        composable(Routes.CREAR_JORNADA) {
+            CrearJornadaScreen(
+                onNavigateToAdmin = {
                     navController.popBackStack()
                 }
             )
