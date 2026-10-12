@@ -6,10 +6,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.proyectocapebeapp.ui.screen.LoginScreen
 import com.example.proyectocapebeapp.ui.screen.RegisterScreen
+import com.example.proyectocapebeapp.ui.screen.AdminHomeScreen
+import com.example.proyectocapebeapp.ui.screen.InvitadoHomeScreen
 
 object Routes {
     const val LOGIN = "login"
     const val REGISTER = "register"
+    const val INVITADO_HOME = "invitado_home"
+    const val ADMIN_HOME = "admin_home"
 }
 
 @Composable
@@ -32,6 +36,12 @@ fun AppNavigation() {
                     navController.popBackStack()
                 }
             )
+        }
+        composable(Routes.INVITADO_HOME) {
+            InvitadoHomeScreen()
+        }
+        composable(Routes.ADMIN_HOME) {
+            AdminHomeScreen()
         }
     }
 }
