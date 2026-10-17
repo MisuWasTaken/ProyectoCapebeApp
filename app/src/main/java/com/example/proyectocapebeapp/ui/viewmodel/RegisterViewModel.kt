@@ -18,8 +18,8 @@ fun onPasswordChanged(password: String){
     uiState = uiState.copy(password = password, MensajeError = null)
 }
 
-fun onConfirmPasswordChanged(confirmPasword: String){
-    uiState = uiState.copy(confirmPasword = confirmPassword, MensajeError = null)  
+fun onConfirmPasswordChanged(confirmPassword: String){
+    uiState = uiState.copy(confirmPassword = confirmPassword, MensajeError = null)  
 }
 
 fun onRegisterClick(onInvitadoSuccess: () -> Unit){

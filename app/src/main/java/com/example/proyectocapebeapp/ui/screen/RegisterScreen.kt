@@ -27,7 +27,7 @@ fun RegisterScreen(
             .fillMaxSize()
             .padding(paddingValues = innerPadding)
             .padding(all = 16.dp)
-        horizontalAlignment = Aligment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text("Registro de usuario", style = MaterialTheme.typography.headlineMedium)
@@ -35,36 +35,73 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
         
         OutlinedTextField(
-            value = state.email
+            value = state.email,
             onValueChange = {viewModel.onEmailChanged(email = it )},
             label = {Text("Email")},
             singleLine = true,
             keyboardOptions = keyboardOptions(keyboardType = keyboardType.Email),
-            
+            modifier = Modifier.fillMaxWidth()
         )
+        
+        Spacer (modifier = Modifier.height(12.dp))
+        
+        OutlinedTextField(
+            value = state.password,
+            onValueChange = { viewModel.onPasswordChanged(password = it)},
+            label = {Text("Contraseña")},
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = keyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        //Confirmar contraseña
+        
+        OutlinedTextField(
+            value = state.confirmPassword,
+            onValueChange = { viewModel.onConfirmPasswordChanged(confirmPassword = it)},
+            label = {Text("Repetir Contraseña")},
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = keyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        
+        //Error
+        
+    if (state.MensajeError != null){
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = state.MensajeError,
+            color = Color.Red,
+            style = MaterialTheme.typography.bodyMedium
+            )
     }
     
+    Spacer(modifier = Modifier.height(20.dp))
     
-    }
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Registro")
-
-        Button(
-            onClick = { }
-        ) {
-            Text(text = "Registrarse")
-        }
-
-        Button(
-            onClick = {
+    Button(
+        onClick = {
+            viewModel.onRegisterClick{
+                Toast.makeText(
+                    context,
+                    text = "Registro exitosos, inicie sesion",
+                    duration = Toast.LENGTH_SHORT
+                ).show()
                 onNavigateToLogin()
             }
-        ) {
-            Text(text = "Volver")
-        }
+        },
+        modifier = Modifier.fillMaxWidth()
+    ){
+        Text(text = "Registrarse")
     }
+    Spacer(modifier = Modifier.height(8.dp))
+    
+    
+    
+}
+}
 }
