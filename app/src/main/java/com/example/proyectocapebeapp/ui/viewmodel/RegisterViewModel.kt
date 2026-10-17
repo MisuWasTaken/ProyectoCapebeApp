@@ -14,11 +14,25 @@ fun onPasswordChanged(password: String){
 }
 
 fun onConfirmPasswordChanged(confirmPasword: String){
-    uiState = uiState.copy(confirmPasword = confirmPassword, MensajeError = null)
-    
+    uiState = uiState.copy(confirmPasword = confirmPassword, MensajeError = null)  
 }
 
 fun onRegisterClick(onInvitadoSuccess: () -> Unit){
+    val state = uiState
     
+    if(state.email.isBlank() || state.password.isBlank()){
+       uiState = uiState.copy(MensajeError = "Ingrese los datos correspondientes")
+       return 
+    }
+    
+    if (state.password != state.confirmPassword){
+        uiState = uiState.copy(MensajeError = "Las contraseñas no coinciden.")
+        return
+    }
+    
+    //Validaciones correctas:
+    Log.d(tag= "RegisterVM", msg="Usuario registrado: ${state.name} (${state.email})")
+    uiState = uiState.copy(MensajeError = null)
+    onSucess()
 }
 }
