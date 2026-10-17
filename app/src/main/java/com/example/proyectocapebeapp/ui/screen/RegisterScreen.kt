@@ -11,8 +11,41 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun RegisterScreen(
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    viewmodel: RegisterViewModel = viewModel()
 ) {
+    
+    val state = viewModel.uiState
+    val context = LocalContext.current
+    
+    Scaffold(
+        topBar = {Header(title="REGISTRO DE USUARIO")},
+        bottomBar = {Footer()}
+    ) {innerPadding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues = innerPadding)
+            .padding(all = 16.dp)
+        horizontalAlignment = Aligment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text("Registro de usuario", style = MaterialTheme.typography.headlineMedium)
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        OutlinedTextField(
+            value = state.email
+            onValueChange = {viewModel.onEmailChanged(email = it )},
+            label = {Text("Email")},
+            singleLine = true,
+            keyboardOptions = keyboardOptions(keyboardType = keyboardType.Email),
+            
+        )
+    }
+    
+    
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
