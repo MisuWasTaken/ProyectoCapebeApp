@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.proyectocapebeapp.ui.screen.MisVuelosScreen
 
 object Routes {
     const val LOGIN = "login"
@@ -23,6 +24,8 @@ object Routes {
     const val CREAR_JORNADA = "crear_jornada"
 
     const val VER_JORNADAS = "ver_jornadas"
+
+    const val MIS_VUELOS = "mis_vuelos"
 }
 
 @Composable
@@ -61,6 +64,9 @@ fun AppNavigation() {
                 },
                 onNavigateToVerJornadas = {
                     navController.navigate(Routes.VER_JORNADAS)
+                },
+                onNavigateToMisVuelos = {
+                    navController.navigate(Routes.MIS_VUELOS)
                 }
             )
         }
@@ -87,6 +93,14 @@ fun AppNavigation() {
         composable(Routes.CREAR_JORNADA) {
             CrearJornadaScreen(
                 onNavigateToAdmin = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable(Routes.MIS_VUELOS) {
+            MisVuelosScreen(
+                usuarioId = usuarioIdActual,
+                onNavigateToInvitado = {
                     navController.popBackStack()
                 }
             )

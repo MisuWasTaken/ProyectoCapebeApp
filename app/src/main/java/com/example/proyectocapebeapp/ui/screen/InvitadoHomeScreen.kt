@@ -18,7 +18,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun InvitadoHomeScreen(
     onNavigateToLogin: () -> Unit,
-    onNavigateToVerJornadas: () -> Unit
+    onNavigateToVerJornadas: () -> Unit,
+    onNavigateToMisVuelos: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -43,7 +44,9 @@ fun InvitadoHomeScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
         Button(
-            onClick = { },
+            onClick = {
+                onNavigateToMisVuelos()
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Mis vuelos")
