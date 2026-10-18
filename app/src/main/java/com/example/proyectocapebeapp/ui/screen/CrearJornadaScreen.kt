@@ -21,6 +21,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import androidx.compose.material3.OutlinedButton
+import java.util.Calendar
+import android.widget.Toast
 
 @Composable
 fun CrearJornadaScreen(
@@ -29,6 +34,36 @@ fun CrearJornadaScreen(
 ) {
     val state = viewModel.uiState
     val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val datePickerDialog = DatePickerDialog(
+
+        context,
+        { _, year, month, dayOfMonth ->
+            val fechaSeleccionada =
+                "$dayOfMonth/${month + 1}/$year"
+            viewModel.onFechaChanged(fechaSeleccionada)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+    val timePickerDialog = TimePickerDialog(
+        context,
+        { _, hour, minute ->
+            val horaSeleccionada =
+                if (minute < 10) {
+                    "$hour:0$minute"
+                } else {
+                    "$hour:$minute"
+                }
+            viewModel.onHoraChanged(horaSeleccionada)
+        },
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
+        true
+    )
+    datePickerDialog.datePicker.minDate = System.currentTimeMillis()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,32 +78,41 @@ fun CrearJornadaScreen(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-        OutlinedTextField(
-            value = state.fecha,
-            onValueChange = {
-                viewModel.onFechaChanged(it)
+
+        OutlinedButton(
+            onClick = {
+                datePickerDialog.show()
             },
-            label = {
-                Text("Fecha")
-            },
-            singleLine = true,
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            Text(
+                text = if (state.fecha.isBlank()) {
+                    "Seleccionar fecha"
+                } else {
+                    "Fecha: ${state.fecha}"
+                }
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
-        OutlinedTextField(
-            value = state.hora,
-            onValueChange = {
-                viewModel.onHoraChanged(it)
+
+        OutlinedButton(
+            onClick = {
+                timePickerDialog.show()
             },
-            label = {
-                Text("Hora")
-            },
-            singleLine = true,
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            Text(
+                text = if (state.hora.isBlank()) {
+                    "Seleccionar hora"
+                } else {
+                    "Hora: ${state.hora}"
+                }
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
+
         OutlinedTextField(
             value = state.cupos,
             onValueChange = {
@@ -93,11 +137,19 @@ fun CrearJornadaScreen(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
+
         Button(
             onClick = {
                 viewModel.onCrearJornadaClick(
                     context = context,
-                    onSuccess = onNavigateToAdmin
+                    onSuccess = {
+                        Toast.makeText(
+                            context,
+                            "Jornada creada correctamente",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        onNavigateToAdmin()
+                    }
                 )
             },
             modifier = Modifier.fillMaxWidth()
@@ -106,6 +158,7 @@ fun CrearJornadaScreen(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+
         Button(
             onClick = {
                 onNavigateToAdmin()
@@ -114,5 +167,7 @@ fun CrearJornadaScreen(
         ) {
             Text("Volver")
         }
+
+
     }
 }
