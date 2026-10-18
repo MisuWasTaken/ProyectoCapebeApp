@@ -24,6 +24,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.RegisterViewModel
+import com.example.proyectocapebeapp.ui.components.Header
+import com.example.proyectocapebeapp.ui.components.Footer
 
 @Composable
 fun RegisterScreen(
@@ -32,7 +34,7 @@ fun RegisterScreen(
 ) {
     val state = viewModel.uiState
     val context = LocalContext.current
-    
+
     Scaffold(
         topBar = { Header(title = "REGISTRO DE USUARIO") },
         bottomBar = { Footer() }
@@ -46,32 +48,46 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text("Registro de usuario", style = MaterialTheme.typography.headlineMedium)
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
+            OutlinedTextField(
+                value = state.name,
+                onValueChange = { viewModel.onNameChanged(name = it) },
+                label = { Text("Nombre completo") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             OutlinedTextField(
                 value = state.email,
                 onValueChange = { viewModel.onEmailChanged(email = it) },
-                label = { Text("Email") },
+                label = { Text("Correo electronico") },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             OutlinedTextField(
                 value = state.password,
                 onValueChange = { viewModel.onPasswordChanged(password = it) },
                 label = { Text("Contraseña") },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             // Confirmar contraseña
             OutlinedTextField(
                 value = state.confirmPassword,
@@ -82,7 +98,7 @@ fun RegisterScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             // Error
             if (state.MensajeError != null) {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -92,12 +108,14 @@ fun RegisterScreen(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(20.dp))
-            
+
             Button(
                 onClick = {
-                    viewModel.onRegisterClick {
+                    viewModel.onRegisterClick(
+                        context = context
+                    ){
                         Toast.makeText(
                             context,
                             "Registro exitoso, inicie sesión",
@@ -111,6 +129,14 @@ fun RegisterScreen(
                 Text(text = "Registrarse")
             }
             Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = {
+                    onNavigateToLogin()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Volver")
+            }
         }
     }
 }
