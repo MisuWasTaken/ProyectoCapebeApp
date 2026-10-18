@@ -30,7 +30,7 @@ class LoginViewModel : ViewModel() {
 
     fun onLoginClick(
         context: Context,
-        onInvitadoSuccess: () -> Unit,
+        onInvitadoSuccess: (Int) -> Unit,
         onAdminSuccess: () -> Unit
     ) {
 
@@ -56,7 +56,7 @@ class LoginViewModel : ViewModel() {
 
             if (user != null && user.password == password) {
                 errorMessage = null
-                onInvitadoSuccess()
+                onInvitadoSuccess(user.id)
             } else {
                 errorMessage = "Correo o contraseña incorrectos."
             }

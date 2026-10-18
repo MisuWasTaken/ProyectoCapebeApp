@@ -15,7 +15,18 @@ class JornadaViewModel : ViewModel() {
 
     var uiState by mutableStateOf(JornadaModel())
         private set
+    var jornadas by mutableStateOf<List<JornadaEntity>>(emptyList())
+        private set
 
+    fun cargarJornadas(context: Context) {
+
+        viewModelScope.launch {
+
+            val db = AppDatabase.getDatabase(context)
+
+            jornadas = db.jornadaDao().obtenerJornadas()
+        }
+    }
     fun onFechaChanged(fecha: String) {
         uiState = uiState.copy(
             fecha = fecha,

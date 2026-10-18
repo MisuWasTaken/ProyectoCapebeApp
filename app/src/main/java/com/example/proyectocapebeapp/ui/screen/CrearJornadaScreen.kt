@@ -73,7 +73,7 @@ fun CrearJornadaScreen(
     ) {
 
         Text(
-            text = "Crear Jornada",
+            text = "Programar vuelo",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -87,7 +87,7 @@ fun CrearJornadaScreen(
         ) {
             Text(
                 text = if (state.fecha.isBlank()) {
-                    "Seleccionar fecha"
+                    "Seleccionar fecha del vuelo"
                 } else {
                     "Fecha: ${state.fecha}"
                 }
@@ -104,7 +104,7 @@ fun CrearJornadaScreen(
         ) {
             Text(
                 text = if (state.hora.isBlank()) {
-                    "Seleccionar hora"
+                    "Seleccionar hora del vuelo"
                 } else {
                     "Hora: ${state.hora}"
                 }
@@ -119,7 +119,7 @@ fun CrearJornadaScreen(
                 viewModel.onCuposChanged(it)
             },
             label = {
-                Text("Cupos")
+                Text("Cupos disponibles")
             },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
@@ -145,7 +145,7 @@ fun CrearJornadaScreen(
                     onSuccess = {
                         Toast.makeText(
                             context,
-                            "Jornada creada correctamente",
+                            "Vuelo programado correctamente",
                             Toast.LENGTH_SHORT
                         ).show()
                         onNavigateToAdmin()
@@ -154,7 +154,7 @@ fun CrearJornadaScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Crear jornada")
+            Text("Programar vuelo")
         }
 
         Spacer(modifier = Modifier.height(8.dp))

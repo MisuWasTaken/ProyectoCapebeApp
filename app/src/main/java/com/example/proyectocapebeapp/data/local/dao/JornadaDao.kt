@@ -13,4 +13,7 @@ interface JornadaDao {
 
     @Query("SELECT * FROM jornadas")
     suspend fun obtenerJornadas(): List<JornadaEntity>
+
+    @Query("SELECT * FROM jornadas WHERE id = :jornadaId LIMIT 1")
+    suspend fun obtenerJornadaPorId(jornadaId: Int): JornadaEntity?
 }

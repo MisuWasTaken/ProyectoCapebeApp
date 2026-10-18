@@ -8,11 +8,14 @@ import com.example.proyectocapebeapp.data.local.dao.UsuarioDao
 import com.example.proyectocapebeapp.data.local.entity.UsuarioEntity
 import com.example.proyectocapebeapp.data.local.dao.JornadaDao
 import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
+import com.example.proyectocapebeapp.data.local.dao.InscripcionDao
+import com.example.proyectocapebeapp.data.local.entity.InscripcionEntity
 
 @Database(
     entities = [
         UsuarioEntity::class,
-        JornadaEntity::class
+        JornadaEntity::class,
+        InscripcionEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -20,6 +23,8 @@ import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
 abstract class AppDatabase : RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
     abstract fun jornadaDao(): JornadaDao
+
+    abstract fun inscripcionDao(): InscripcionDao
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null

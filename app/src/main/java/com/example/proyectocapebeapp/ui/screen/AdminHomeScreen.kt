@@ -36,21 +36,21 @@ fun AdminHomeScreen(
             onClick = { onNavigateToCrearJornada() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Crear jornada")
+            Text(text = "Programar vuelo")
         }
         Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = { },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Ver jornadas")
+            Text(text = "Ver vuelos programados")
         }
         Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = { },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Ver inscritos")
+            Text(text = "Ver pasajeros inscritos")
         }
         Spacer(modifier = Modifier.height(12.dp))
         Button(

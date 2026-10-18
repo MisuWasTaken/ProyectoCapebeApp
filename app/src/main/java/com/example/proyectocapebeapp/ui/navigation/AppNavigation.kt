@@ -9,18 +9,25 @@ import com.example.proyectocapebeapp.ui.screen.RegisterScreen
 import com.example.proyectocapebeapp.ui.screen.AdminHomeScreen
 import com.example.proyectocapebeapp.ui.screen.InvitadoHomeScreen
 import com.example.proyectocapebeapp.ui.screen.CrearJornadaScreen
+import com.example.proyectocapebeapp.ui.screen.VerJornadasScreen
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 object Routes {
     const val LOGIN = "login"
     const val REGISTER = "register"
     const val INVITADO_HOME = "invitado_home"
     const val ADMIN_HOME = "admin_home"
-
     const val CREAR_JORNADA = "crear_jornada"
+
+    const val VER_JORNADAS = "ver_jornadas"
 }
 
 @Composable
 fun AppNavigation() {
+    var usuarioIdActual by remember { mutableStateOf(0) }
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -31,7 +38,8 @@ fun AppNavigation() {
                 onNavigateToRegister = {
                     navController.navigate(Routes.REGISTER)
                 },
-                onInvitadoSuccess = {
+                onInvitadoSuccess = { usuarioId ->
+                    usuarioIdActual = usuarioId
                     navController.navigate(Routes.INVITADO_HOME)
                 },
                 onAdminSuccess = {
@@ -50,9 +58,22 @@ fun AppNavigation() {
             InvitadoHomeScreen(
                 onNavigateToLogin = {
                     navController.popBackStack()
+                },
+                onNavigateToVerJornadas = {
+                    navController.navigate(Routes.VER_JORNADAS)
                 }
             )
         }
+
+        composable(Routes.VER_JORNADAS) {
+            VerJornadasScreen(
+                usuarioId = usuarioIdActual,
+                onNavigateToInvitado = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable(Routes.ADMIN_HOME) {
             AdminHomeScreen(
                 onNavigateToLogin = {

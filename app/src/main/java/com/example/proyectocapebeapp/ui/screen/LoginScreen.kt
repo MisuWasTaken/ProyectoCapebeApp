@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
-    onInvitadoSuccess: () -> Unit,
+    onInvitadoSuccess: (Int) -> Unit,
     onAdminSuccess: () -> Unit,
     viewModel: LoginViewModel = viewModel()
 ) {
