@@ -17,6 +17,9 @@ class InscripcionViewModel : ViewModel() {
         private set
     var mensaje by mutableStateOf<String?>(null)
         private set
+
+    var vuelosInscritos by mutableStateOf<List<Int>>(emptyList())
+        private set
     fun inscribirseEnVuelo(
         context: Context,
         usuarioId: Int,
@@ -27,6 +30,7 @@ class InscripcionViewModel : ViewModel() {
             val inscripcionExistente =
                 db.inscripcionDao().obtenerInscripcion(usuarioId, jornadaId)
             if (inscripcionExistente != null) {
+                vuelosInscritos = vuelosInscritos + jornadaId
                 mensaje = "Ya estas inscrito en este vuelo."
                 return@launch
             }
@@ -36,6 +40,22 @@ class InscripcionViewModel : ViewModel() {
             )
             db.inscripcionDao().crearInscripcion(inscripcion)
             mensaje = "Inscripcion realizada con exito."
+        }
+    }
+
+    fun cargarVuelosInscritos(
+        context: Context,
+        usuarioId: Int
+    ) {
+        viewModelScope.launch {
+            val db = AppDatabase.getDatabase(context)
+            val inscripciones =
+                db.inscripcionDao().obtenerInscripcionesUsuario(usuarioId)
+            val vuelos = mutableListOf<Int>()
+            for (inscripcion in inscripciones) {
+                vuelos.add(inscripcion.jornadaId)
+            }
+            vuelosInscritos = vuelos
         }
     }
 

@@ -28,12 +28,14 @@ fun VerJornadasScreen(
     viewModel: JornadaViewModel = viewModel(),
     inscripcionViewModel: InscripcionViewModel = viewModel()
 ) {
-
     val context = LocalContext.current
     val jornadas = viewModel.jornadas
-
     LaunchedEffect(Unit) {
         viewModel.cargarJornadas(context)
+        inscripcionViewModel.cargarVuelosInscritos(
+            context = context,
+            usuarioId = usuarioId
+        )
     }
     Column(
         modifier = Modifier
@@ -43,20 +45,27 @@ fun VerJornadasScreen(
         Text(text = "Vuelos disponibles")
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        if (inscripcionViewModel.mensaje != null) {
+            Text(
+                text = inscripcionViewModel.mensaje!!
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
         if (jornadas.isEmpty()) {
             Text(text = "No hay vuelos disponibles.")
         } else {
-
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.weight(1f)
             ) {
                 items(jornadas) { jornada ->
+                    val estaInscrito =
+                        inscripcionViewModel.vuelosInscritos.contains(jornada.id)
 
                     Card(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-
                         Column(
                             modifier = Modifier.padding(16.dp)
                         ) {
@@ -65,7 +74,6 @@ fun VerJornadasScreen(
                             Text(text = "Hora: ${jornada.hora}")
                             Text(text = "Cupos disponibles: ${jornada.cupos}")
                             Text(text = "Estado: ${jornada.estado}")
-
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Button(
@@ -76,18 +84,27 @@ fun VerJornadasScreen(
                                         jornadaId = jornada.id
                                     )
                                 },
+                                enabled = !estaInscrito,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("Inscribirme")
+                                Text(
+                                    text = if (estaInscrito) {
+                                        "Ya estas inscrito"
+                                    } else {
+                                        "Inscribirme"
+                                    }
+                                )
                             }
                         }
                     }
                 }
             }
         }
+
         Spacer(modifier = Modifier.height(12.dp))
         Button(
-            onClick = {onNavigateToInvitado()
+            onClick = {
+                onNavigateToInvitado()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
