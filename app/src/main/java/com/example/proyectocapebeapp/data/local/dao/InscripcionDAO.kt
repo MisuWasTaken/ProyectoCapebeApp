@@ -29,4 +29,17 @@ interface InscripcionDao {
     suspend fun obtenerInscripcionesJornada(
         jornadaId: Int
     ): List<InscripcionEntity>
+
+    @Query("SELECT COUNT(*) FROM inscripciones WHERE jornadaId = :jornadaId")
+    suspend fun contarInscritos(jornadaId: Int): Int
+
+    @Query("""
+    UPDATE inscripciones
+    SET jornadaId = :nuevaJornadaId
+    WHERE id = :inscripcionId
+""")
+    suspend fun cambiarVuelo(
+        inscripcionId: Int,
+        nuevaJornadaId: Int
+    )
 }

@@ -62,6 +62,9 @@ fun VerJornadasScreen(
                 items(jornadas) { jornada ->
                     val estaInscrito =
                         inscripcionViewModel.vuelosInscritos.contains(jornada.id)
+                    val cupos =
+                        viewModel.cuposDisponibles[jornada.id] ?: jornada.cupos
+                    val sinCupos = cupos <= 0
 
                     Card(
                         modifier = Modifier.fillMaxWidth()
@@ -72,7 +75,7 @@ fun VerJornadasScreen(
 
                             Text(text = "Fecha: ${jornada.fecha}")
                             Text(text = "Hora: ${jornada.hora}")
-                            Text(text = "Cupos disponibles: ${jornada.cupos}")
+                            Text(text = "Cupos disponibles: $cupos")
                             Text(text = "Estado: ${jornada.estado}")
                             Spacer(modifier = Modifier.height(8.dp))
 
@@ -81,15 +84,18 @@ fun VerJornadasScreen(
                                     inscripcionViewModel.inscribirseEnVuelo(
                                         context = context,
                                         usuarioId = usuarioId,
-                                        jornadaId = jornada.id
-                                    )
+                                        jornadaId = jornada.id,
+                                        onSuccess = {
+                                            viewModel.cargarJornadas(context) })
                                 },
-                                enabled = !estaInscrito,
+                                enabled = !estaInscrito && !sinCupos,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
                                     text = if (estaInscrito) {
                                         "Ya estas inscrito"
+                                    } else if (sinCupos) {
+                                        "Sin cupos"
                                     } else {
                                         "Inscribirme"
                                     }

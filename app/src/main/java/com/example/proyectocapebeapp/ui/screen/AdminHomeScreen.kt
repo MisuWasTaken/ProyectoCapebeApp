@@ -18,7 +18,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AdminHomeScreen(
     onNavigateToLogin: () -> Unit,
-    onNavigateToCrearJornada: () -> Unit
+    onNavigateToCrearJornada: () -> Unit,
+    onNavigateToVerInscritos: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -33,7 +34,9 @@ fun AdminHomeScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = { onNavigateToCrearJornada() },
+            onClick = {
+                onNavigateToCrearJornada()
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Programar vuelo")
@@ -47,7 +50,9 @@ fun AdminHomeScreen(
         }
         Spacer(modifier = Modifier.height(12.dp))
         Button(
-            onClick = { },
+            onClick = {
+                onNavigateToVerInscritos()
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Ver pasajeros inscritos")
@@ -55,7 +60,8 @@ fun AdminHomeScreen(
         Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = {
-                onNavigateToLogin() },
+                onNavigateToLogin()
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Cerrar sesion")

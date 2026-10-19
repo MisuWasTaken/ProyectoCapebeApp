@@ -18,13 +18,26 @@ class JornadaViewModel : ViewModel() {
     var jornadas by mutableStateOf<List<JornadaEntity>>(emptyList())
         private set
 
+    var cuposDisponibles by mutableStateOf<Map<Int, Int>>(emptyMap())
+        private set
     fun cargarJornadas(context: Context) {
 
         viewModelScope.launch {
-
             val db = AppDatabase.getDatabase(context)
-
             jornadas = db.jornadaDao().obtenerJornadas()
+            val cupos = mutableMapOf<Int, Int>()
+            for (jornada in jornadas) {
+                val inscritos =
+                    db.inscripcionDao().contarInscritos(jornada.id)
+                val disponibles =
+                    jornada.cupos - inscritos
+                if (disponibles < 0) {
+                    cupos[jornada.id] = 0
+                } else {
+                    cupos[jornada.id] = disponibles
+                }
+            }
+            cuposDisponibles = cupos
         }
     }
     fun onFechaChanged(fecha: String) {
