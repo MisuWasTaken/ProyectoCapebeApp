@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.InscripcionViewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
+import android.widget.Toast
 
 @Composable
 fun VerJornadasScreen(
@@ -45,13 +46,6 @@ fun VerJornadasScreen(
         Text(text = "Vuelos disponibles")
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        if (inscripcionViewModel.mensaje != null) {
-            Text(
-                text = inscripcionViewModel.mensaje!!
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-        }
         if (jornadas.isEmpty()) {
             Text(text = "No hay vuelos disponibles.")
         } else {
@@ -65,20 +59,17 @@ fun VerJornadasScreen(
                     val cupos =
                         viewModel.cuposDisponibles[jornada.id] ?: jornada.cupos
                     val sinCupos = cupos <= 0
-
                     Card(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp)
                         ) {
-
                             Text(text = "Fecha: ${jornada.fecha}")
                             Text(text = "Hora: ${jornada.hora}")
                             Text(text = "Cupos disponibles: $cupos")
                             Text(text = "Estado: ${jornada.estado}")
                             Spacer(modifier = Modifier.height(8.dp))
-
                             Button(
                                 onClick = {
                                     inscripcionViewModel.inscribirseEnVuelo(
@@ -86,7 +77,14 @@ fun VerJornadasScreen(
                                         usuarioId = usuarioId,
                                         jornadaId = jornada.id,
                                         onSuccess = {
-                                            viewModel.cargarJornadas(context) })
+                                            Toast.makeText(
+                                                context,
+                                                "Te has inscrito correctamente a este vuelo.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            viewModel.cargarJornadas(context)
+                                        }
+                                    )
                                 },
                                 enabled = !estaInscrito && !sinCupos,
                                 modifier = Modifier.fillMaxWidth()
@@ -105,16 +103,16 @@ fun VerJornadasScreen(
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(12.dp))
-        Button(
-            onClick = {
-                onNavigateToInvitado()
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Volver")
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                onClick = {
+                    onNavigateToInvitado()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Volver")
+            }
         }
     }
 }
