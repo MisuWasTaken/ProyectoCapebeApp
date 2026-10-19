@@ -10,6 +10,7 @@ import com.example.proyectocapebeapp.data.database.AppDatabase
 import com.example.proyectocapebeapp.data.local.entity.InscripcionEntity
 import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
 import com.example.proyectocapebeapp.model.PasajeroInscritoModel
+import com.example.proyectocapebeapp.notification.NotificacionHelper
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -62,12 +63,24 @@ class InscripcionViewModel : ViewModel() {
                 jornadaId = jornadaId
             )
             db.inscripcionDao().crearInscripcion(inscripcion)
+            val inscripcionGuardada =
+                db.inscripcionDao().obtenerInscripcion(
+                    usuarioId,
+                    jornadaId
+                )
+            if (inscripcionGuardada != null) {
+                NotificacionHelper.programarRecordatorio(
+                    context = context,
+                    inscripcionId = inscripcionGuardada.id,
+                    fecha = vuelo.fecha,
+                    hora = vuelo.hora
+                )
+            }
             vuelosInscritos = vuelosInscritos + jornadaId
             mensaje = "Te has inscrito correctamente a este vuelo."
             onSuccess()
         }
     }
-
 
     fun cargarVuelosInscritos(
         context: Context,
@@ -106,8 +119,6 @@ class InscripcionViewModel : ViewModel() {
             misVuelos = vuelos
         }
     }
-
-
     fun cargarPasajerosInscritos(
         context: Context,
         jornadaId: Int
@@ -188,6 +199,12 @@ class InscripcionViewModel : ViewModel() {
                         usuarioId,
                         nuevaJornadaId
                     )
+            NotificacionHelper.programarRecordatorio(
+                context = context,
+                inscripcionId = inscripcionId,
+                fecha = nuevoVuelo.fecha,
+                hora = nuevoVuelo.hora
+            )
             if (inscripcionExistente != null) {
                 mensaje = "El pasajero ya esta inscrito en ese vuelo."
                 return@launch

@@ -21,6 +21,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.InscripcionViewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.content.ContextCompat
 
 @Composable
 fun VerJornadasScreen(
@@ -31,6 +37,12 @@ fun VerJornadasScreen(
 ) {
     val context = LocalContext.current
     val jornadas = viewModel.jornadas
+    val permisoNotificaciones =
+        rememberLauncherForActivityResult(
+            contract =
+                ActivityResultContracts.RequestPermission()
+        ) {
+        }
     LaunchedEffect(Unit) {
         viewModel.cargarJornadas(context)
         inscripcionViewModel.cargarVuelosInscritos(
@@ -44,7 +56,6 @@ fun VerJornadasScreen(
             .padding(16.dp)
     ) {
         Text(text = "Vuelos disponibles")
-
         Spacer(modifier = Modifier.height(16.dp))
         if (jornadas.isEmpty()) {
             Text(text = "No hay vuelos disponibles.")
@@ -77,6 +88,11 @@ fun VerJornadasScreen(
                                         usuarioId = usuarioId,
                                         jornadaId = jornada.id,
                                         onSuccess = {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                                ContextCompat.checkSelfPermission(
+                                                    context,
+                                                    Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+                                            { permisoNotificaciones.launch(Manifest.permission.POST_NOTIFICATIONS) }
                                             Toast.makeText(
                                                 context,
                                                 "Te has inscrito correctamente a este vuelo.",
@@ -103,7 +119,6 @@ fun VerJornadasScreen(
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(12.dp))
             Button(
                 onClick = {

@@ -26,6 +26,8 @@ import android.app.TimePickerDialog
 import androidx.compose.material3.OutlinedButton
 import java.util.Calendar
 import android.widget.Toast
+import androidx.compose.foundation.shape.RoundedCornerShape
+
 
 @Composable
 fun CrearJornadaScreen(
@@ -125,9 +127,9 @@ fun CrearJornadaScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number
             ),
+            shape = RoundedCornerShape(50.dp),
             modifier = Modifier.fillMaxWidth()
         )
-
         if (state.errorMessage != null) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
