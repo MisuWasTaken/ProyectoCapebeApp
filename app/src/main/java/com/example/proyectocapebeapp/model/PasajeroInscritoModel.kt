@@ -6,5 +6,6 @@ data class PasajeroInscritoModel(
     val nombre: String,
     val email: String,
     val jornadaId: Int,
-    val fotoPath: String? = null
+    val fotoPath: String? = null,
+    val consentimientoAceptado: Boolean
 )

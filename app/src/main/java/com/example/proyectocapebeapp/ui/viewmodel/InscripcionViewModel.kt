@@ -60,7 +60,8 @@ class InscripcionViewModel : ViewModel() {
             }
             val inscripcion = InscripcionEntity(
                 usuarioId = usuarioId,
-                jornadaId = jornadaId
+                jornadaId = jornadaId,
+                consentimientoAceptado = true
             )
             db.inscripcionDao().crearInscripcion(inscripcion)
             val inscripcionGuardada =
@@ -141,7 +142,8 @@ class InscripcionViewModel : ViewModel() {
                         nombre = usuario.name,
                         email = usuario.email,
                         jornadaId = jornadaId,
-                        fotoPath = usuario.fotoPath
+                        fotoPath = usuario.fotoPath,
+                        consentimientoAceptado = inscripcion.consentimientoAceptado
                     )
                     pasajeros.add(pasajero)
                 }

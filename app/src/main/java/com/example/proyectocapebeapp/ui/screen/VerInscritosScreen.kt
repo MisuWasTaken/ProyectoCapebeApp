@@ -166,19 +166,20 @@ fun VerInscritosScreen(
                                 Text(
                                     text = pasajero.email
                                 )
-                                Spacer(
-                                    modifier =
-                                        Modifier.height(8.dp)
+                                Text(
+                                    text = if (pasajero.consentimientoAceptado) {
+                                        "Consentimiento: Aceptado"
+                                    } else {
+                                        "Consentimiento: Pendiente"
+                                    }
                                 )
+                                Spacer( modifier = Modifier.height(8.dp))
                                 Button(
                                     onClick = {
-                                        pasajeroSeleccionado =
-                                            pasajero
+                                        pasajeroSeleccionado = pasajero
                                     },
-                                    modifier =
-                                        Modifier.fillMaxWidth()
-                                ) {
-                                    Text("Cambiar vuelo")
+                                    modifier = Modifier.fillMaxWidth()
+                                ) { Text("Cambiar vuelo")
                                 }
                             }
                         }

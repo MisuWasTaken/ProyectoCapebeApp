@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "inscripciones")
 data class InscripcionEntity(
-
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val usuarioId: Int,
-    val jornadaId: Int
+    val jornadaId: Int,
+    val consentimientoAceptado: Boolean = false
 )
