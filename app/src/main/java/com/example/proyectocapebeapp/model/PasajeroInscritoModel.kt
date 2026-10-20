@@ -5,5 +5,6 @@ data class PasajeroInscritoModel(
     val usuarioId: Int,
     val nombre: String,
     val email: String,
-    val jornadaId: Int
+    val jornadaId: Int,
+    val fotoPath: String? = null
 )

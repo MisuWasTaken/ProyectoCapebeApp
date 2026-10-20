@@ -140,7 +140,8 @@ class InscripcionViewModel : ViewModel() {
                         usuarioId = usuario.id,
                         nombre = usuario.name,
                         email = usuario.email,
-                        jornadaId = jornadaId
+                        jornadaId = jornadaId,
+                        fotoPath = usuario.fotoPath
                     )
                     pasajeros.add(pasajero)
                 }

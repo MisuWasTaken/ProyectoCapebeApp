@@ -59,6 +59,13 @@ fun VerJornadasScreen(
         Spacer(modifier = Modifier.height(16.dp))
         if (jornadas.isEmpty()) {
             Text(text = "No hay vuelos disponibles.")
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                onNavigateToInvitado()
+            }, modifier = Modifier.fillMaxWidth())
+            {
+                Text("Volver")
+            }
         } else {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),

@@ -27,6 +27,12 @@ import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
 import com.example.proyectocapebeapp.model.PasajeroInscritoModel
 import com.example.proyectocapebeapp.ui.viewmodel.InscripcionViewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 
 @Composable
 fun VerInscritosScreen(
@@ -130,22 +136,47 @@ fun VerInscritosScreen(
                         {
                             Column(
                                 modifier =
-                                    Modifier.padding(16.dp))
-                            {
-                                Text( text = pasajero.nombre
+                                    Modifier.padding(16.dp)
+                            ) {
+                                val foto =
+                                    if (pasajero.fotoPath != null) {
+                                        BitmapFactory.decodeFile(
+                                            pasajero.fotoPath
+                                        )
+                                    } else {
+                                        null
+                                    }
+                                if (foto != null) {
+                                    Image(
+                                        bitmap = foto.asImageBitmap(),
+                                        contentDescription =
+                                            "Foto de identificacion",
+                                        modifier = Modifier
+                                            .size(100.dp)
+                                            .clip(CircleShape)
+                                    )
+                                    Spacer(
+                                        modifier =
+                                            Modifier.height(8.dp)
+                                    )
+                                }
+                                Text(
+                                    text = pasajero.nombre
                                 )
                                 Text(
                                     text = pasajero.email
                                 )
-
                                 Spacer(
-                                    modifier = Modifier.height(8.dp)
+                                    modifier =
+                                        Modifier.height(8.dp)
                                 )
-
                                 Button(
-                                    onClick = { pasajeroSeleccionado = pasajero
+                                    onClick = {
+                                        pasajeroSeleccionado =
+                                            pasajero
                                     },
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier =
+                                        Modifier.fillMaxWidth()
                                 ) {
                                     Text("Cambiar vuelo")
                                 }
