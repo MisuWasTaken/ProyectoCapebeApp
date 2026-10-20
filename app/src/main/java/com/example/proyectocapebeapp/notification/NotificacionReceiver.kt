@@ -57,10 +57,10 @@ class NotificacionReceiver : BroadcastReceiver() {
                     android.R.drawable.ic_dialog_info
                 )
                 .setContentTitle(
-                    "Tu vuelo es en 24 horas"
+                    "Recuerda tu vuelo"
                 )
                 .setContentText(
-                    "Recuerda tu vuelo CAPEBE el $fecha a las $hora."
+                    "Tu vuelo es el $fecha a las $hora."
                 )
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)

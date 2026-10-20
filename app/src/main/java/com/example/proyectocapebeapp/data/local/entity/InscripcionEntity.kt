@@ -8,7 +8,6 @@ data class InscripcionEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-
     val usuarioId: Int,
     val jornadaId: Int
 )

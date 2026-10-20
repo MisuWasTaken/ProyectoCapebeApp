@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import com.example.proyectocapebeapp.ui.screen.MisVuelosScreen
 import com.example.proyectocapebeapp.ui.screen.VerInscritosScreen
 import com.example.proyectocapebeapp.ui.screen.VerVuelosProgramadosScreen
+import com.example.proyectocapebeapp.ui.screen.FotoIdentificacionScreen
 
 object Routes {
     const val LOGIN = "login"
@@ -28,6 +29,8 @@ object Routes {
     const val VER_JORNADAS = "ver_jornadas"
 
     const val MIS_VUELOS = "mis_vuelos"
+
+    const val FOTO_IDENTIFICACION = "foto_identificacion"
 
     const val VER_INSCRITOS = "ver_inscritos"
 
@@ -72,6 +75,9 @@ fun AppNavigation() {
                 },
                 onNavigateToMisVuelos = {
                     navController.navigate(Routes.MIS_VUELOS)
+                },
+                onNavigateToFotoIdentificacion = {
+                    navController.navigate(Routes.FOTO_IDENTIFICACION)
                 }
             )
         }
@@ -117,6 +123,14 @@ fun AppNavigation() {
             MisVuelosScreen(
                 usuarioId = usuarioIdActual,
                 onNavigateToInvitado = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable(Routes.FOTO_IDENTIFICACION) {
+            FotoIdentificacionScreen(
+                usuarioId = usuarioIdActual,
+                onVolver = {
                     navController.popBackStack()
                 }
             )

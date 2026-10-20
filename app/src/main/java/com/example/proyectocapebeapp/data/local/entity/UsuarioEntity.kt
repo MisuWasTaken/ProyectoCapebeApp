@@ -8,9 +8,9 @@ data class UsuarioEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-
     val name: String,
     val email: String,
     val password: String,
-    val rol: String
+    val rol: String,
+    val fotoPath: String? = null
 )

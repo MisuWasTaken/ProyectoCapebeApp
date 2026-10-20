@@ -23,6 +23,10 @@ object NotificacionHelper {
         val fechaVuelo =
             formato.parse("$fecha $hora")
                 ?: return
+        val ahora = System.currentTimeMillis()
+        if (fechaVuelo.time <= ahora) {
+            return
+        }
         val calendario =
             Calendar.getInstance()
         calendario.time = fechaVuelo
@@ -30,13 +34,10 @@ object NotificacionHelper {
             Calendar.HOUR_OF_DAY,
             -24
         )
-        val momentoNotificacion =
+        var momentoNotificacion =
             calendario.timeInMillis
-        if (
-            momentoNotificacion <=
-            System.currentTimeMillis()
-        ) {
-            return
+        if (momentoNotificacion <= ahora) {
+            momentoNotificacion = ahora + 1000
         }
         val intent = Intent(
             context,

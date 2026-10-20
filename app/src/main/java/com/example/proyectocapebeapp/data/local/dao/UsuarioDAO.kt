@@ -17,4 +17,6 @@ interface UsuarioDao {
 
     @Query("SELECT * FROM users WHERE id = :usuarioId LIMIT 1")
     suspend fun getUserById(usuarioId: Int): UsuarioEntity?
+
+    @Query("""UPDATE users SET fotoPath = :fotoPath WHERE id = :usuarioId """) suspend fun actualizarFoto( usuarioId: Int,  fotoPath: String)
 }
