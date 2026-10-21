@@ -173,7 +173,7 @@ fun FotoIdentificacionScreen(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Tomar fotografía",
+                text = "Tomar foto",
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
             )
