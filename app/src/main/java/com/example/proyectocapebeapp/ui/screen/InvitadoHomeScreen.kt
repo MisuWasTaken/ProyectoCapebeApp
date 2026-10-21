@@ -77,7 +77,7 @@ fun InvitadoHomeScreen(
                 )
             )
             Text(
-                text = "¿Selecciona una opcion?",
+                text = "Selecciona una opcion",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = TextMuted
                 )
@@ -96,7 +96,7 @@ fun InvitadoHomeScreen(
             MenuOptionCard(
                 badgeText = "🎫",
                 title = "Mis Vuelos",
-                subtitle = "Revisa tus reservas e itinerarios activos",
+                subtitle = "Consulta tus vuelos programados",
                 onClick = onNavigateToMisVuelos
             )
             MenuOptionCard(

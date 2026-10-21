@@ -124,7 +124,7 @@ fun VerJornadasScreen(
                     )
                 )
                 Text(
-                    text = "Selecciona un vuelo para tu inscripcion",
+                    text = "Selecciona un vuelo disponible",
                     style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                 )
             }

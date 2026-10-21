@@ -97,7 +97,7 @@ fun VerVuelosProgramadosScreen(
                     )
                 )
                 Text(
-                    text = "Consulta el estado y disponibilidad",
+                    text = "Consulta los vuelos y cupos disponibles",
                     style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                 )
             }

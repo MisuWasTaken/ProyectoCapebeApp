@@ -94,21 +94,21 @@ fun AdminHomeScreen(
             AdminOptionCard(
                 badgeText = "➕",
                 title = "Programar Vuelo",
-                subtitle = "Crea una nueva jornada de vuelo y cupos",
+                subtitle = "Define fecha, horario y cupos del vuelo",
                 onClick = onNavigateToCrearJornada
             )
 
             AdminOptionCard(
                 badgeText = "✈",
                 title = "Ver Vuelos Programados",
-                subtitle = "Consulta o revisa el estado de los vuelos",
+                subtitle = "Consulta los vuelos programados",
                 onClick = onNavigateToVerVuelos
             )
 
             AdminOptionCard(
                 badgeText = "👥",
                 title = "Ver Pasajeros Inscritos",
-                subtitle = "Administra listas y reasigna vuelos",
+                subtitle = "Revisa pasajeros y cambia vuelos",
                 onClick = onNavigateToVerInscritos
             )
         }

@@ -151,21 +151,27 @@ class InscripcionViewModel : ViewModel() {
             pasajerosInscritos = pasajeros
         }
     }
-
-
     fun esFechaPosterior(
         fechaActual: String,
-        nuevaFecha: String
+        horaActual: String,
+        nuevaFecha: String,
+        nuevaHora: String
     ): Boolean {
         return try {
             val formato =
                 SimpleDateFormat(
-                    "d/M/yyyy",
+                    "d/M/yyyy H:mm",
                     Locale.getDefault()
                 )
             formato.isLenient = false
-            val actual = formato.parse(fechaActual)
-            val nueva = formato.parse(nuevaFecha)
+            val actual =
+                formato.parse(
+                    "$fechaActual $horaActual"
+                )
+            val nueva =
+                formato.parse(
+                    "$nuevaFecha $nuevaHora"
+                )
             actual != null &&
                     nueva != null &&
                     nueva.after(actual)

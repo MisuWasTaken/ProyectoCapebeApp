@@ -115,7 +115,7 @@ fun VerInscritosScreen(
                     )
                 )
                 Text(
-                    text = "Administra inscripciones y listas de vuelo",
+                    text = "Consulta y gestiona los pasajeros inscritos",
                     style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                 )
             }
@@ -143,7 +143,7 @@ fun VerInscritosScreen(
         when {
             vueloActual == null -> {
                 Text(
-                    text = "Selecciona un vuelo para ver pasajeros:",
+                    text = "Selecciona un vuelo para ver sus pasajeros:",
                     fontWeight = FontWeight.SemiBold,
                     color = TextDark,
                     fontSize = 15.sp
@@ -334,7 +334,10 @@ fun VerInscritosScreen(
                     nuevoVuelo.id != vueloActual.id &&
                             cupos > 0 &&
                             nuevoVuelo.estado == "Disponible" &&
-                            inscripcionViewModel.esFechaPosterior(vueloActual.fecha, nuevoVuelo.fecha)
+                            inscripcionViewModel.esFechaPosterior(vueloActual.fecha, vueloActual.hora,
+                                nuevoVuelo.fecha,
+                                nuevoVuelo.hora
+                            )
                 }
                 if (vuelosValidos.isEmpty()) {
                     Box(

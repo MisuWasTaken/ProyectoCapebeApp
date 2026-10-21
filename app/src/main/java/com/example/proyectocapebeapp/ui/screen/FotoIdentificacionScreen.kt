@@ -102,7 +102,7 @@ fun FotoIdentificacionScreen(
             )
         )
         Text(
-            text = "Foto requerida para el abordaje del vuelo",
+            text = "Registra tu foto de identificacion",
             style = MaterialTheme.typography.bodySmall.copy(color = TextMuted),
             textAlign = TextAlign.Center
         )

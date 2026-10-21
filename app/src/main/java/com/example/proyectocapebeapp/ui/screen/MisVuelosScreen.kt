@@ -90,7 +90,7 @@ fun MisVuelosScreen(
             Spacer(modifier = Modifier.width(14.dp))
             Column {
                 Text(
-                    text = "Mis Reservas",
+                    text = "Mis vuelos",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold,
                         color = TextDark
@@ -113,7 +113,7 @@ fun MisVuelosScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = "Sin reservas",
+                        contentDescription = "Sin vuelos",
                         tint = TextMuted,
                         modifier = Modifier.size(48.dp)
                     )
@@ -147,7 +147,7 @@ fun MisVuelosScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "RESERVA DE VUELO",
+                                    text = "VUELO CONFIRMADO",
                                     fontWeight = FontWeight.ExtraBold,
                                     color = BlueSecondary,
                                     fontSize = 12.sp,
