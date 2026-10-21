@@ -77,9 +77,10 @@ fun VerJornadasScreen(
 ) {
     val context = LocalContext.current
     val jornadas = viewModel.jornadas
+    val jornadasDisponibles = jornadas.filter { jornada -> viewModel.esVueloFuturo(jornada.fecha, jornada.hora)
+    }
     var jornadaSeleccionada by remember { mutableStateOf<JornadaEntity?>(null) }
     var consentimientoAceptado by remember { mutableStateOf(false) }
-
     val permisoNotificaciones = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {}
@@ -131,7 +132,7 @@ fun VerJornadasScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        if (jornadas.isEmpty()) {
+        if (jornadasDisponibles.isEmpty()) {
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -159,11 +160,10 @@ fun VerJornadasScreen(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                items(jornadas) { jornada ->
+                items(jornadasDisponibles) { jornada ->
                     val estaInscrito = inscripcionViewModel.vuelosInscritos.contains(jornada.id)
                     val cupos = viewModel.cuposDisponibles[jornada.id] ?: jornada.cupos
                     val sinCupos = cupos <= 0
-
                     JornadaCardItem(
                         fecha = jornada.fecha,
                         hora = jornada.hora,
@@ -228,7 +228,7 @@ fun VerJornadasScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Declaro que acepto participar en el vuelo recreativo CAPEBE, seguir las indicaciones de seguridad y presentarme al menos 15 minutos antes del horario asignado.",
+                        text = "Declaro que acepto participar en el vuelo recreativo CAPEBE, seguir las indicaciones de seguridad y presentarme al menos 20 minutos antes del horario asignado.",
                         color = TextMuted,
                         fontSize = 13.sp
                     )

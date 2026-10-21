@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EventSeat
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Info
@@ -108,7 +107,7 @@ fun VerInscritosScreen(
             Spacer(modifier = Modifier.width(14.dp))
             Column {
                 Text(
-                    text = "Gestionar Pasajeros",
+                    text = "Pasajeros inscritos",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold,
                         color = TextDark
@@ -143,7 +142,7 @@ fun VerInscritosScreen(
         when {
             vueloActual == null -> {
                 Text(
-                    text = "Selecciona un vuelo para ver sus pasajeros:",
+                    text = "Selecciona un vuelo para ver sus pasajeros",
                     fontWeight = FontWeight.SemiBold,
                     color = TextDark,
                     fontSize = 15.sp

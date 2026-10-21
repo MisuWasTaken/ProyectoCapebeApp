@@ -43,7 +43,6 @@ import com.example.proyectocapebeapp.ui.components.Header
 import com.example.proyectocapebeapp.ui.viewmodel.RegisterViewModel
 import androidx.compose.foundation.layout.width
 private val BluePrimary = Color(0xFF0D47A1)
-private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
 private val CardBg = Color(0xFFFFFFFF)
 private val TextDark = Color(0xFF1E293B)

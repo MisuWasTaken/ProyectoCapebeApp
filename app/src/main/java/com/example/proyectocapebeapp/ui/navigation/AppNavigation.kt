@@ -18,6 +18,11 @@ import com.example.proyectocapebeapp.ui.screen.MisVuelosScreen
 import com.example.proyectocapebeapp.ui.screen.VerInscritosScreen
 import com.example.proyectocapebeapp.ui.screen.VerVuelosProgramadosScreen
 import com.example.proyectocapebeapp.ui.screen.FotoIdentificacionScreen
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
 
 object Routes {
     const val LOGIN = "login"
@@ -42,7 +47,39 @@ fun AppNavigation() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Routes.LOGIN
+        startDestination = Routes.LOGIN,
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { it },
+                animationSpec = tween(300)
+            ) + fadeIn(
+                animationSpec = tween(300)
+            )
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { -it / 4 },
+                animationSpec = tween(300)
+            ) + fadeOut(
+                animationSpec = tween(300)
+            )
+        },
+        popEnterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { -it },
+                animationSpec = tween(300)
+            ) + fadeIn(
+                animationSpec = tween(300)
+            )
+        },
+        popExitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { it },
+                animationSpec = tween(300)
+            ) + fadeOut(
+                animationSpec = tween(300)
+            )
+        }
     ) {
         composable(Routes.LOGIN) {
             LoginScreen(

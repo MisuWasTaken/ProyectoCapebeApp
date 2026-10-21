@@ -10,6 +10,9 @@ import com.example.proyectocapebeapp.data.database.AppDatabase
 import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
 import com.example.proyectocapebeapp.model.JornadaModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class JornadaViewModel : ViewModel() {
 
@@ -61,6 +64,23 @@ class JornadaViewModel : ViewModel() {
         )
     }
 
+    fun esVueloFuturo(
+        fecha: String,
+        hora: String
+    ): Boolean {
+        return try {
+            val formato = SimpleDateFormat(
+                "d/M/yyyy H:mm",
+                Locale.getDefault()
+            )
+            formato.isLenient = false
+            val fechaHora = formato.parse("$fecha $hora")
+            fechaHora != null && fechaHora.after(Date())
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun onCrearJornadaClick(
         context: Context,
         onSuccess: () -> Unit
@@ -82,6 +102,13 @@ class JornadaViewModel : ViewModel() {
         if (cuposNumero == null || cuposNumero <= 0) {
             uiState = uiState.copy(
                 errorMessage = "Los cupos deben ser un numero mayor a 0."
+            )
+            return
+        }
+
+        if (!esVueloFuturo(uiState.fecha, uiState.hora)) {
+            uiState = uiState.copy(
+                errorMessage = "La fecha y hora del vuelo deben ser posteriores a la actual."
             )
             return
         }
