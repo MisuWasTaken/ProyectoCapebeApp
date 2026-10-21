@@ -36,8 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.LoginViewModel
-
-// Paleta temática
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
@@ -55,7 +53,6 @@ fun LoginScreen(
 ) {
     val state = viewModel.uiState
     val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,7 +61,6 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        //Logo
         Box(
             modifier = Modifier
                 .size(64.dp)
@@ -81,7 +77,6 @@ fun LoginScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
         Text(
             text = "Bienvenido a CAPEBE",
             style = MaterialTheme.typography.headlineSmall.copy(
@@ -90,13 +85,11 @@ fun LoginScreen(
             )
         )
         Text(
-            text = "Inicia sesión para gestionar tus vuelos",
+            text = "Inicia sesion para gestionar tus vuelos",
             style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-
-        //Campos de ingreso
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = CardBg),
@@ -109,7 +102,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = state.email,
                     onValueChange = { viewModel.onEmailChanged(it) },
-                    label = { Text("Correo electrónico") },
+                    label = { Text("Correo electronico") },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -128,7 +121,6 @@ fun LoginScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 if (viewModel.errorMessage != null) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
@@ -142,8 +134,6 @@ fun LoginScreen(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        //Boton inicio de sesion
         Button(
             onClick = {
                 viewModel.onLoginClick(
@@ -159,15 +149,13 @@ fun LoginScreen(
                 .height(50.dp)
         ) {
             Text(
-                text = "Iniciar sesión",
+                text = "Iniciar sesion",
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
             )
         }
 
         Spacer(modifier = Modifier.height(10.dp))
-
-        //Boton de registro
         OutlinedButton(
             onClick = { onNavigateToRegister() },
             shape = RoundedCornerShape(12.dp),
@@ -176,7 +164,7 @@ fun LoginScreen(
                 .height(48.dp)
         ) {
             Text(
-                text = "¿No tienes cuenta? Regístrate",
+                text = "¿No tienes cuenta? Registrate",
                 color = BlueSecondary,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp

@@ -44,8 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
 import java.util.Calendar
-
-// Paleta temática
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
@@ -128,8 +126,6 @@ fun CrearJornadaScreen(
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        //Formulario
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = CardBg),
@@ -139,7 +135,6 @@ fun CrearJornadaScreen(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                // Selector de Fecha
                 OutlinedButton(
                     onClick = { datePickerDialog.show() },
                     shape = RoundedCornerShape(10.dp),
@@ -165,8 +160,6 @@ fun CrearJornadaScreen(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-
-                // Selector de Hora
                 OutlinedButton(
                     onClick = { timePickerDialog.show() },
                     shape = RoundedCornerShape(10.dp),
@@ -192,8 +185,6 @@ fun CrearJornadaScreen(
                 }
 
                 Spacer(modifier = Modifier.height(14.dp))
-
-                // Campo de Cupos
                 OutlinedTextField(
                     value = state.cupos,
                     onValueChange = { viewModel.onCuposChanged(it) },
@@ -203,7 +194,6 @@ fun CrearJornadaScreen(
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 if (state.errorMessage != null) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
@@ -217,8 +207,6 @@ fun CrearJornadaScreen(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        //Boton de accion
         Button(
             onClick = {
                 viewModel.onCrearJornadaClick(
@@ -247,8 +235,6 @@ fun CrearJornadaScreen(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-
-        //Boton volver
         OutlinedButton(
             onClick = onNavigateToAdmin,
             shape = RoundedCornerShape(12.dp),

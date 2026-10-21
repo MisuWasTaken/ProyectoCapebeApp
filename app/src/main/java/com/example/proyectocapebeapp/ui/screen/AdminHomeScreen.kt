@@ -80,7 +80,7 @@ fun AdminHomeScreen(
                 )
             )
             Text(
-                text = "Gestiona los vuelos y pasajeros de la agencia",
+                text = "Gestiona los vuelos y pasajeros de CAPEBE",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = TextMuted
                 )
@@ -112,8 +112,6 @@ fun AdminHomeScreen(
                 onClick = onNavigateToVerInscritos
             )
         }
-
-        //Boton de cerrar sesion
         OutlinedButton(
             onClick = onNavigateToLogin,
             shape = RoundedCornerShape(12.dp),
@@ -122,7 +120,7 @@ fun AdminHomeScreen(
                 .height(50.dp)
         ) {
             Text(
-                text = "Cerrar sesión",
+                text = "Cerrar sesion",
                 color = DangerRed,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
@@ -131,7 +129,6 @@ fun AdminHomeScreen(
     }
 }
 
-//Tarjeta admin
 @Composable
 private fun AdminOptionCard(
     badgeText: String,

@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.FotoIdentificacionViewModel
 
-// Paleta temática
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
@@ -96,21 +95,19 @@ fun FotoIdentificacionScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Identificación de Pasajero",
+            text = "Identificacion de Pasajero",
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
                 color = TextDark
             )
         )
         Text(
-            text = "Fotografía requerida para el abordaje del vuelo",
+            text = "Foto requerida para el abordaje del vuelo",
             style = MaterialTheme.typography.bodySmall.copy(color = TextMuted),
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(28.dp))
-
-        //Tarjeta que contiene la foto
         Card(
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = CardBg),
@@ -159,8 +156,6 @@ fun FotoIdentificacionScreen(
         }
 
         Spacer(modifier = Modifier.height(28.dp))
-
-        // --- BOTÓN DE CÁMARA ---
         Button(
             onClick = {
                 launcherCamara.launch(null)
@@ -185,8 +180,6 @@ fun FotoIdentificacionScreen(
         }
 
         Spacer(modifier = Modifier.height(12.dp))
-
-        //Boton volver
         OutlinedButton(
             onClick = onVolver,
             shape = RoundedCornerShape(12.dp),

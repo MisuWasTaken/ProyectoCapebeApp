@@ -41,8 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.components.Footer
 import com.example.proyectocapebeapp.ui.components.Header
 import com.example.proyectocapebeapp.ui.viewmodel.RegisterViewModel
-
-// Paleta
+import androidx.compose.foundation.layout.width
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
@@ -58,7 +57,6 @@ fun RegisterScreen(
 ) {
     val state = viewModel.uiState
     val context = LocalContext.current
-
     Scaffold(
         topBar = { Header(title = "REGISTRO DE USUARIO") },
         bottomBar = { Footer() }
@@ -88,7 +86,6 @@ fun RegisterScreen(
             }
 
             Spacer(modifier = Modifier.height(10.dp))
-
             Text(
                 text = "Crear nueva cuenta",
                 style = MaterialTheme.typography.headlineSmall.copy(
@@ -97,13 +94,11 @@ fun RegisterScreen(
                 )
             )
             Text(
-                text = "Completa tus datos para registrarte en la agencia",
+                text = "Completa tus datos para registrarte",
                 style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Tarjeta contenedora de los campos de texto
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = CardBg),
@@ -123,11 +118,10 @@ fun RegisterScreen(
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
-
                     OutlinedTextField(
                         value = state.email,
                         onValueChange = { viewModel.onEmailChanged(email = it) },
-                        label = { Text("Correo electrónico") },
+                        label = { Text("Correo electronico") },
                         singleLine = true,
                         shape = RoundedCornerShape(10.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -148,7 +142,6 @@ fun RegisterScreen(
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
-
                     OutlinedTextField(
                         value = state.confirmPassword,
                         onValueChange = { viewModel.onConfirmPasswordChanged(confirmPassword = it) },
@@ -159,8 +152,6 @@ fun RegisterScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    // Mensaje de Error (si existe)
                     if (state.MensajeError != null) {
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
@@ -174,14 +165,12 @@ fun RegisterScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Botón de Registro Principal
             Button(
                 onClick = {
                     viewModel.onRegisterClick(context = context) {
                         Toast.makeText(
                             context,
-                            "Registro exitoso, inicie sesión",
+                            "Registro exitoso, inicie sesion",
                             Toast.LENGTH_SHORT
                         ).show()
                         onNavigateToLogin()
@@ -201,8 +190,6 @@ fun RegisterScreen(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Botón de Volver
             OutlinedButton(
                 onClick = { onNavigateToLogin() },
                 shape = RoundedCornerShape(12.dp),
@@ -218,7 +205,7 @@ fun RegisterScreen(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Volver al inicio de sesión",
+                    text = "Volver al inicio de sesion",
                     color = TextMuted,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp

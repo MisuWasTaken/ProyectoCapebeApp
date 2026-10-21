@@ -28,15 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-// Paleta de Colores temáticos para la app de vuelos
-private val BluePrimary = Color(0xFF0D47A1)      // Azul Rey
-private val BlueSecondary = Color(0xFF1976D2)    // Azul Claro
-private val BackgroundLight = Color(0xFFF4F7FA)  // Gris suave de fondo
-private val CardBg = Color(0xFFFFFFFF)           // Blanco limpio
-private val TextDark = Color(0xFF1E293B)         // Texto principal
-private val TextMuted = Color(0xFF64748B)        // Texto secundario
-private val DangerRed = Color(0xFFDC2626)        // Rojo para cerrar sesión
+private val BluePrimary = Color(0xFF0D47A1)
+private val BlueSecondary = Color(0xFF1976D2)
+private val BackgroundLight = Color(0xFFF4F7FA)
+private val CardBg = Color(0xFFFFFFFF)
+private val TextDark = Color(0xFF1E293B)
+private val TextMuted = Color(0xFF64748B)
+private val DangerRed = Color(0xFFDC2626)
 
 @Composable
 fun InvitadoHomeScreen(
@@ -55,7 +53,6 @@ fun InvitadoHomeScreen(
         Column(
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            // Estado de usuario
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50.dp))
@@ -72,53 +69,43 @@ fun InvitadoHomeScreen(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
             Text(
-                text = "¡Hola, Viajero!",
+                text = "Bienvenido!",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = TextDark
                 )
             )
             Text(
-                text = "¿Qué deseas realizar en tu vuelo hoy?",
+                text = "¿Selecciona una opcion?",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = TextMuted
                 )
             )
         }
-
-        // Tarjetas
         Column(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Opción 1: Ver Vuelos Disponibles
             MenuOptionCard(
                 badgeText = "✈",
                 title = "Ver Vuelos Disponibles",
-                subtitle = "Explora los horarios y cupos de la agencia",
+                subtitle = "Explora los horarios y cupos disponibles",
                 onClick = onNavigateToVerJornadas
             )
-
-            // Opción 2: Mis Vuelos
             MenuOptionCard(
                 badgeText = "🎫",
                 title = "Mis Vuelos",
                 subtitle = "Revisa tus reservas e itinerarios activos",
                 onClick = onNavigateToMisVuelos
             )
-
-            // Opción 3: Mi Identificación
             MenuOptionCard(
                 badgeText = "🪪",
-                title = "Mi Identificación",
-                subtitle = "Documentos y foto para abordar",
+                title = "Mi Identificacion",
+                subtitle = "Registra tu foto de identificacion",
                 onClick = onNavigateToFotoIdentificacion
             )
         }
-
-        //Cerrar sesion
         OutlinedButton(
             onClick = onNavigateToLogin,
             shape = RoundedCornerShape(12.dp),
@@ -127,7 +114,7 @@ fun InvitadoHomeScreen(
                 .height(50.dp)
         ) {
             Text(
-                text = "Cerrar sesión",
+                text = "Cerrar sesion",
                 color = DangerRed,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
@@ -135,8 +122,6 @@ fun InvitadoHomeScreen(
         }
     }
 }
-
-// tarjeta personalizada
 @Composable
 private fun MenuOptionCard(
     badgeText: String,
@@ -158,7 +143,6 @@ private fun MenuOptionCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Círculo con emoji/ícono nativo
             Box(
                 modifier = Modifier
                     .size(46.dp)
@@ -173,8 +157,6 @@ private fun MenuOptionCard(
             }
 
             Spacer(modifier = Modifier.width(14.dp))
-
-            // Textos de Título y Subtítulo
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -190,8 +172,6 @@ private fun MenuOptionCard(
                     color = TextMuted
                 )
             }
-
-            // Flecha indicadora derecha
             Text(
                 text = "›",
                 fontSize = 24.sp,

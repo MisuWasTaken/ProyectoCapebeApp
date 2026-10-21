@@ -58,8 +58,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
 import com.example.proyectocapebeapp.ui.viewmodel.InscripcionViewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
-
-// Paleta de colores de la agencia
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
@@ -85,7 +83,6 @@ fun VerJornadasScreen(
     val permisoNotificaciones = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {}
-
     LaunchedEffect(Unit) {
         viewModel.cargarJornadas(context)
         inscripcionViewModel.cargarVuelosInscritos(
@@ -93,7 +90,6 @@ fun VerJornadasScreen(
             usuarioId = usuarioId
         )
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -128,15 +124,13 @@ fun VerJornadasScreen(
                     )
                 )
                 Text(
-                    text = "Selecciona un vuelo para tu inscripción",
+                    text = "Selecciona un vuelo para tu inscripcion",
                     style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        //Lista
         if (jornadas.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -188,8 +182,6 @@ fun VerJornadasScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // --- BOTÓN VOLVER ---
         Button(
             onClick = onNavigateToInvitado,
             colors = ButtonDefaults.buttonColors(
@@ -214,8 +206,6 @@ fun VerJornadasScreen(
             )
         }
     }
-
-    //Condiciones
     if (jornadaSeleccionada != null) {
         AlertDialog(
             onDismissRequest = {
@@ -232,7 +222,7 @@ fun VerJornadasScreen(
             text = {
                 Column {
                     Text(
-                        text = "Para completar tu inscripción debes aceptar las condiciones del vuelo recreativo.",
+                        text = "Para completar tu inscripcion debes aceptar las condiciones del vuelo recreativo.",
                         color = TextDark,
                         fontSize = 14.sp
                     )
@@ -297,7 +287,7 @@ fun VerJornadasScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
                     shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text(text = "Confirmar inscripción", color = Color.White)
+                    Text(text = "Confirmar inscripcion", color = Color.White)
                 }
             },
             dismissButton = {
@@ -314,8 +304,6 @@ fun VerJornadasScreen(
         )
     }
 }
-
-//tarjeta de vuelo
 @Composable
 private fun JornadaCardItem(
     fecha: String,
@@ -336,21 +324,18 @@ private fun JornadaCardItem(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Cabecera de la tarjeta con etiqueta de estado
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "VUELO DISPONIBLE",
+                    text = "VUELO",
                     fontWeight = FontWeight.ExtraBold,
                     color = BlueSecondary,
                     fontSize = 12.sp,
                     letterSpacing = 1.sp
                 )
-
-                // Chip dinámico
                 val chipBg = when {
                     estaInscrito -> StatusOrange.copy(alpha = 0.12f)
                     sinCupos -> StatusRed.copy(alpha = 0.12f)
@@ -366,7 +351,6 @@ private fun JornadaCardItem(
                     sinCupos -> "Agotado"
                     else -> estado.ifEmpty { "Disponible" }
                 }
-
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50.dp))
@@ -381,10 +365,7 @@ private fun JornadaCardItem(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(12.dp))
-
-            // Información de fecha y hora
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -402,8 +383,6 @@ private fun JornadaCardItem(
             }
 
             Spacer(modifier = Modifier.height(10.dp))
-
-            // Cupos
             JornadaInfoRow(
                 icon = Icons.Default.EventSeat,
                 label = "Disponibilidad",
@@ -411,8 +390,6 @@ private fun JornadaCardItem(
             )
 
             Spacer(modifier = Modifier.height(14.dp))
-
-            // Botón de Acción
             Button(
                 onClick = onInscribirClick,
                 enabled = !estaInscrito && !sinCupos,
@@ -427,7 +404,7 @@ private fun JornadaCardItem(
             ) {
                 Text(
                     text = when {
-                        estaInscrito -> "Ya estás inscrito"
+                        estaInscrito -> "Ya estas inscrito"
                         sinCupos -> "Sin cupos disponibles"
                         else -> "Inscribirme al vuelo"
                     },
@@ -438,7 +415,6 @@ private fun JornadaCardItem(
         }
     }
 }
-
 @Composable
 private fun JornadaInfoRow(
     icon: ImageVector,

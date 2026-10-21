@@ -202,12 +202,6 @@ class InscripcionViewModel : ViewModel() {
                         usuarioId,
                         nuevaJornadaId
                     )
-            NotificacionHelper.programarRecordatorio(
-                context = context,
-                inscripcionId = inscripcionId,
-                fecha = nuevoVuelo.fecha,
-                hora = nuevoVuelo.hora
-            )
             if (inscripcionExistente != null) {
                 mensaje = "El pasajero ya esta inscrito en ese vuelo."
                 return@launch
@@ -215,6 +209,12 @@ class InscripcionViewModel : ViewModel() {
             db.inscripcionDao().cambiarVuelo(
                 inscripcionId = inscripcionId,
                 nuevaJornadaId = nuevaJornadaId
+            )
+            NotificacionHelper.programarRecordatorio(
+                context = context,
+                inscripcionId = inscripcionId,
+                fecha = nuevoVuelo.fecha,
+                hora = nuevoVuelo.hora
             )
             mensaje = "Vuelo actualizado correctamente."
             onSuccess()

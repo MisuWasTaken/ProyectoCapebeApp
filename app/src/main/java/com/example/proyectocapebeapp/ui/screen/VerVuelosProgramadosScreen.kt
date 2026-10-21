@@ -42,21 +42,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
-
-// Paleta de colores
-
-
-private val BluePrimary = Color(0xFF0D47A1)      // Azul Rey Profundo
-private val BlueSecondary = Color(0xFF1976D2)    // Azul Medio
-private val BlueBackground = Color(0xFFF4F7FA)   // Gris-Azulado claro para el fondo
-private val BlueCardBg = Color(0xFFFFFFFF)       // Blanco puro para tarjetas
-private val TextDark = Color(0xFF1E293B)         // Texto oscuro
-private val TextMuted = Color(0xFF64748B)        // Texto secundario
-private val StatusGreen = Color(0xFF16A34A)      // Verde para disponible
-private val StatusRed = Color(0xFFDC2626)        // Rojo para completo
+private val BluePrimary = Color(0xFF0D47A1)
+private val BlueSecondary = Color(0xFF1976D2)
+private val BlueBackground = Color(0xFFF4F7FA)
+private val BlueCardBg = Color(0xFFFFFFFF)
+private val TextDark = Color(0xFF1E293B)
+private val TextMuted = Color(0xFF64748B)
+private val StatusGreen = Color(0xFF16A34A)
+private val StatusRed = Color(0xFFDC2626)
 
 @Composable
-fun verVuelosProgramadosScreen(
+fun VerVuelosProgramadosScreen(
     onNavigateToAdmin: () -> Unit,
     viewModel: JornadaViewModel = viewModel()
 ) {
@@ -73,7 +69,6 @@ fun verVuelosProgramadosScreen(
             .background(BlueBackground)
             .padding(20.dp)
     ) {
-        // --- CABECERA CON ICONO DE VUELO ---
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 12.dp)
@@ -107,10 +102,7 @@ fun verVuelosProgramadosScreen(
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
-
-        //Listado
         if (vuelos.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -142,7 +134,6 @@ fun verVuelosProgramadosScreen(
                 items(vuelos) { vuelo ->
                     val cuposDisponibles =
                         viewModel.cuposDisponibles[vuelo.id] ?: vuelo.cupos
-
                     vueloItemCard(
                         fecha = vuelo.fecha,
                         hora = vuelo.hora,
@@ -155,8 +146,6 @@ fun verVuelosProgramadosScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        //Boton de regreso
         Button(
             onClick = onNavigateToAdmin,
             colors = ButtonDefaults.buttonColors(
@@ -182,8 +171,6 @@ fun verVuelosProgramadosScreen(
         }
     }
 }
-
-//Tarjeta de vuelo
 @Composable
 private fun vueloItemCard(
     fecha: String,
@@ -201,7 +188,6 @@ private fun vueloItemCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Fila Superior: Badge de Estado
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -214,12 +200,9 @@ private fun vueloItemCard(
                     letterSpacing = 1.sp,
                     fontSize = 13.sp
                 )
-
-                // Status Chip dinamico
                 val isDisponible = cuposDisponibles > 0
                 val chipBg = if (isDisponible) StatusGreen.copy(alpha = 0.12f) else StatusRed.copy(alpha = 0.12f)
                 val chipText = if (isDisponible) StatusGreen else StatusRed
-
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50.dp))
@@ -234,10 +217,7 @@ private fun vueloItemCard(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(12.dp))
-
-            // Fila 1: Fecha y Hora
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -249,14 +229,11 @@ private fun vueloItemCard(
                 )
                 infoIconRow(
                     icon = Icons.Default.Schedule,
-                    label = "Hora departure",
+                    label = "Hora de salida",
                     value = hora
                 )
             }
-
             Spacer(modifier = Modifier.height(12.dp))
-
-            // Fila 2: Cupos Disponibles / Totales
             infoIconRow(
                 icon = Icons.Default.EventSeat,
                 label = "Disponibilidad",
@@ -265,7 +242,6 @@ private fun vueloItemCard(
         }
     }
 }
-
 @Composable
 private fun infoIconRow(
     icon: ImageVector,

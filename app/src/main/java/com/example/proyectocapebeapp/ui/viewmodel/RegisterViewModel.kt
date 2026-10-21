@@ -50,8 +50,6 @@ fun onConfirmPasswordChanged(confirmPassword: String){
         uiState = uiState.copy(MensajeError = "Las contraseñas no coinciden.")
         return
     }
-
-    //Validaciones correctas:
         viewModelScope.launch {
 
             val db = AppDatabase.getDatabase(context)

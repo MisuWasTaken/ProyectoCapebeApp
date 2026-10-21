@@ -41,8 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.InscripcionViewModel
-
-// Paleta temática
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
@@ -59,14 +57,12 @@ fun MisVuelosScreen(
 ) {
     val context = LocalContext.current
     val vuelos = viewModel.misVuelos
-
     LaunchedEffect(Unit) {
         viewModel.cargarMisVuelos(
             context = context,
             usuarioId = usuarioId
         )
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -106,10 +102,7 @@ fun MisVuelosScreen(
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
-
-        //Lista de vuelos
         if (vuelos.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -126,7 +119,7 @@ fun MisVuelosScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Todavía no estás inscrito en ningún vuelo.",
+                        text = "Todavia no estas inscrito en ningun vuelo.",
                         color = TextMuted,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium
@@ -148,21 +141,18 @@ fun MisVuelosScreen(
                         Column(
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            // Cabecera de la tarjeta tipo Ticket
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "BOARDING PASS",
+                                    text = "RESERVA DE VUELO",
                                     fontWeight = FontWeight.ExtraBold,
                                     color = BlueSecondary,
                                     fontSize = 12.sp,
                                     letterSpacing = 1.sp
                                 )
-
-                                // Chip de estado
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(50.dp))
@@ -177,10 +167,7 @@ fun MisVuelosScreen(
                                     )
                                 }
                             }
-
                             Spacer(modifier = Modifier.height(14.dp))
-
-                            // Fila de Fecha y Hora
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -203,8 +190,6 @@ fun MisVuelosScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // --- BOTÓN DE VOLVER ---
         Button(
             onClick = onNavigateToInvitado,
             colors = ButtonDefaults.buttonColors(
@@ -223,14 +208,13 @@ fun MisVuelosScreen(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Volver al menú",
+                text = "Volver al menu",
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
         }
     }
 }
-
 @Composable
 private fun VueloInfoRow(
     icon: ImageVector,
