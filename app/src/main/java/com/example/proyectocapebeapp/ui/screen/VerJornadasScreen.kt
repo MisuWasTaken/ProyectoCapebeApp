@@ -76,12 +76,19 @@ fun VerJornadasScreen(
     inscripcionViewModel: InscripcionViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    var proximosPrimero by remember { mutableStateOf(true) }
     val jornadas = viewModel.vuelosBackend
     val jornadasDisponibles = jornadas.filter { jornada ->
         val partes = jornada.fecha.split("-")
         val fecha = "${partes[2].toInt()}/${partes[1].toInt()}/${partes[0]}"
         viewModel.esVueloFuturo(fecha, jornada.hora.take(5)) &&
                 jornada.estado == "DISPONIBLE"
+    }.let { disponibles ->
+        if (proximosPrimero) {
+            disponibles.sortedBy { "${it.fecha} ${it.hora}" }
+        } else {
+            disponibles.sortedByDescending { "${it.fecha} ${it.hora}" }
+        }
     }
 
     var jornadaSeleccionada by remember { mutableStateOf<VueloResponse?>(null) }
@@ -141,6 +148,16 @@ fun VerJornadasScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = { proximosPrimero = !proximosPrimero },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = BlueSecondary)
+        ) {
+            Text(if (proximosPrimero) "Orden: Proximos vuelos" else "Orden: Vuelos mas lejanos")
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
         val error = viewModel.errorVuelos ?: inscripcionViewModel.mensaje
         if (error != null) {
             Text(

@@ -56,7 +56,7 @@ fun MisVuelosScreen(
     viewModel: InscripcionViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val vuelos = viewModel.misVuelos
+    val vuelos = viewModel.misVuelos.sortedBy { "${it.fecha} ${it.hora}" }
     LaunchedEffect(Unit) {
         viewModel.cargarMisVuelos(
             context = context,

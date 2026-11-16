@@ -1,3 +1,4 @@
+
 package com.example.proyectocapebeapp.ui.screen
 
 import androidx.compose.foundation.background
@@ -42,7 +43,8 @@ fun AdminHomeScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToCrearJornada: () -> Unit,
     onNavigateToVerVuelos: () -> Unit,
-    onNavigateToVerInscritos: () -> Unit
+    onNavigateToVerInscritos: () -> Unit,
+    onNavigateToRegistrarEmbarque: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -51,7 +53,6 @@ fun AdminHomeScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-
         Column(
             modifier = Modifier.padding(top = 16.dp)
         ) {
@@ -79,8 +80,9 @@ fun AdminHomeScreen(
                     color = TextDark
                 )
             )
+
             Text(
-                text = "Gestiona los vuelos y pasajeros de CAPEBE",
+                text = "Gestionar los vuelos y pasajeros",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = TextMuted
                 )
@@ -111,7 +113,15 @@ fun AdminHomeScreen(
                 subtitle = "Revisa pasajeros y cambia vuelos",
                 onClick = onNavigateToVerInscritos
             )
+
+            AdminOptionCard(
+                badgeText = "✓",
+                title = "Control de Participacion",
+                subtitle = "Controla la asistencia de los pasajeros",
+                onClick = onNavigateToRegistrarEmbarque
+            )
         }
+
         OutlinedButton(
             onClick = onNavigateToLogin,
             shape = RoundedCornerShape(12.dp),
@@ -138,8 +148,12 @@ private fun AdminOptionCard(
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardBg),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = CardBg
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
@@ -174,6 +188,7 @@ private fun AdminOptionCard(
                     fontWeight = FontWeight.Bold,
                     color = TextDark
                 )
+
                 Text(
                     text = subtitle,
                     fontSize = 12.sp,

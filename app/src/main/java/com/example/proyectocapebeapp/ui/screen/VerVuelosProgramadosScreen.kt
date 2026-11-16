@@ -31,6 +31,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,7 +59,12 @@ fun VerVuelosProgramadosScreen(
     onNavigateToAdmin: () -> Unit,
     viewModel: JornadaViewModel = viewModel()
 ) {
-    val vuelos = viewModel.vuelosBackend
+    var ultimosPrimero by remember { mutableStateOf(true) }
+    val vuelos = if (ultimosPrimero) {
+        viewModel.vuelosBackend.sortedByDescending { it.id }
+    } else {
+        viewModel.vuelosBackend.sortedBy { it.id }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.cargarVuelosBackend()
@@ -101,6 +110,16 @@ fun VerVuelosProgramadosScreen(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = { ultimosPrimero = !ultimosPrimero },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = BlueSecondary)
+        ) {
+            Text(if (ultimosPrimero) "Orden: Ultimos creados" else "Orden: Primeros creados")
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
         if (viewModel.errorVuelos != null) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text(text = viewModel.errorVuelos ?: "", color = StatusRed)

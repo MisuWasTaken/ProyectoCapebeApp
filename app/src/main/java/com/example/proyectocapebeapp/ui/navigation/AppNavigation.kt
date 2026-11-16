@@ -1,28 +1,30 @@
+
 package com.example.proyectocapebeapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
 import com.example.proyectocapebeapp.ui.screen.LoginScreen
 import com.example.proyectocapebeapp.ui.screen.RegisterScreen
 import com.example.proyectocapebeapp.ui.screen.AdminHomeScreen
 import com.example.proyectocapebeapp.ui.screen.InvitadoHomeScreen
 import com.example.proyectocapebeapp.ui.screen.CrearJornadaScreen
 import com.example.proyectocapebeapp.ui.screen.VerJornadasScreen
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.example.proyectocapebeapp.ui.screen.MisVuelosScreen
 import com.example.proyectocapebeapp.ui.screen.VerInscritosScreen
 import com.example.proyectocapebeapp.ui.screen.VerVuelosProgramadosScreen
 import com.example.proyectocapebeapp.ui.screen.FotoIdentificacionScreen
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.core.tween
+import com.example.proyectocapebeapp.ui.screen.RegistrarEmbarqueScreen
 
 object Routes {
     const val LOGIN = "login"
@@ -30,21 +32,19 @@ object Routes {
     const val INVITADO_HOME = "invitado_home"
     const val ADMIN_HOME = "admin_home"
     const val CREAR_JORNADA = "crear_jornada"
-
     const val VER_JORNADAS = "ver_jornadas"
-
     const val MIS_VUELOS = "mis_vuelos"
-
     const val FOTO_IDENTIFICACION = "foto_identificacion"
-
     const val VER_INSCRITOS = "ver_inscritos"
-
     const val VER_VUELOS_ADMIN = "ver_vuelos_admin"
+    const val REGISTRAR_EMBARQUE = "registrar_embarque"
 }
+
 @Composable
 fun AppNavigation() {
     var usuarioIdActual by remember { mutableStateOf(0) }
     val navController = rememberNavController()
+
     NavHost(
         navController = navController,
         startDestination = Routes.LOGIN,
@@ -95,6 +95,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.REGISTER) {
             RegisterScreen(
                 onNavigateToLogin = {
@@ -102,6 +103,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.INVITADO_HOME) {
             InvitadoHomeScreen(
                 onNavigateToLogin = {
@@ -118,6 +120,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.VER_JORNADAS) {
             VerJornadasScreen(
                 usuarioId = usuarioIdActual,
@@ -126,6 +129,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.ADMIN_HOME) {
             AdminHomeScreen(
                 onNavigateToLogin = {
@@ -139,9 +143,13 @@ fun AppNavigation() {
                 },
                 onNavigateToVerInscritos = {
                     navController.navigate(Routes.VER_INSCRITOS)
+                },
+                onNavigateToRegistrarEmbarque = {
+                    navController.navigate(Routes.REGISTRAR_EMBARQUE)
                 }
             )
         }
+
         composable(Routes.CREAR_JORNADA) {
             CrearJornadaScreen(
                 onNavigateToAdmin = {
@@ -149,6 +157,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.VER_INSCRITOS) {
             VerInscritosScreen(
                 onNavigateToAdmin = {
@@ -156,6 +165,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.MIS_VUELOS) {
             MisVuelosScreen(
                 usuarioId = usuarioIdActual,
@@ -164,6 +174,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.FOTO_IDENTIFICACION) {
             FotoIdentificacionScreen(
                 usuarioId = usuarioIdActual,
@@ -172,8 +183,17 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Routes.VER_VUELOS_ADMIN) {
             VerVuelosProgramadosScreen(
+                onNavigateToAdmin = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.REGISTRAR_EMBARQUE) {
+            RegistrarEmbarqueScreen(
                 onNavigateToAdmin = {
                     navController.popBackStack()
                 }

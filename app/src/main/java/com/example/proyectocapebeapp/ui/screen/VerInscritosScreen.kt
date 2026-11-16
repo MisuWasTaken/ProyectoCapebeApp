@@ -73,7 +73,7 @@ fun VerInscritosScreen(
     inscripcionViewModel: InscripcionViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val vuelos = jornadaViewModel.vuelosBackend
+    val vuelos = jornadaViewModel.vuelosBackend.sortedByDescending { it.id }
     val pasajeros = inscripcionViewModel.pasajerosInscritos
 
     var vueloSeleccionado by remember { mutableStateOf<VueloResponse?>(null) }
