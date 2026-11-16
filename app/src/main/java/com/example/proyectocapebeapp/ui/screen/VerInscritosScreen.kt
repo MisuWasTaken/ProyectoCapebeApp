@@ -1,3 +1,4 @@
+
 package com.example.proyectocapebeapp.ui.screen
 
 import android.graphics.BitmapFactory
@@ -51,10 +52,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
 import com.example.proyectocapebeapp.model.PasajeroInscritoModel
+import com.example.proyectocapebeapp.model.VueloResponse
 import com.example.proyectocapebeapp.ui.viewmodel.InscripcionViewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
+
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
@@ -71,13 +73,18 @@ fun VerInscritosScreen(
     inscripcionViewModel: InscripcionViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val vuelos = jornadaViewModel.jornadas
+    val vuelos = jornadaViewModel.vuelosBackend
     val pasajeros = inscripcionViewModel.pasajerosInscritos
-    var vueloSeleccionado by remember { mutableStateOf<JornadaEntity?>(null) }
+
+    var vueloSeleccionado by remember { mutableStateOf<VueloResponse?>(null) }
     var pasajeroSeleccionado by remember { mutableStateOf<PasajeroInscritoModel?>(null) }
 
     LaunchedEffect(Unit) {
-        jornadaViewModel.cargarJornadas(context)
+        jornadaViewModel.cargarVuelosBackend()
+    }
+
+    LaunchedEffect(vuelos) {
+        inscripcionViewModel.cargarCuposBackend(vuelos)
     }
 
     Column(
@@ -104,7 +111,9 @@ fun VerInscritosScreen(
                     modifier = Modifier.size(28.dp)
                 )
             }
+
             Spacer(modifier = Modifier.width(14.dp))
+
             Column {
                 Text(
                     text = "Pasajeros inscritos",
@@ -115,30 +124,40 @@ fun VerInscritosScreen(
                 )
                 Text(
                     text = "Consulta y gestiona los pasajeros inscritos",
-                    style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = TextMuted
+                    )
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
-        if (inscripcionViewModel.mensaje != null) {
+
+        val error = jornadaViewModel.errorVuelos ?: inscripcionViewModel.mensaje
+
+        if (error != null) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = BlueSecondary.copy(alpha = 0.1f)),
+                colors = CardDefaults.cardColors(
+                    containerColor = BlueSecondary.copy(alpha = 0.1f)
+                ),
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = inscripcionViewModel.mensaje!!,
+                    text = error,
                     color = BluePrimary,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(12.dp)
                 )
             }
+
             Spacer(modifier = Modifier.height(12.dp))
         }
+
         val vueloActual = vueloSeleccionado
         val pasajeroActual = pasajeroSeleccionado
+
         when {
             vueloActual == null -> {
                 Text(
@@ -147,50 +166,83 @@ fun VerInscritosScreen(
                     color = TextDark,
                     fontSize = 15.sp
                 )
+
                 Spacer(modifier = Modifier.height(12.dp))
+
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.weight(1f)
                 ) {
                     items(vuelos) { vuelo ->
-                        val cupos = jornadaViewModel.cuposDisponibles[vuelo.id] ?: vuelo.cupos
+                        val cupos = inscripcionViewModel.cuposBackend[vuelo.id] ?: 0
+
                         Card(
                             shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = CardBg),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = CardBg
+                            ),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 2.dp
+                            ),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    InfoRowSimple(Icons.Default.CalendarToday, "Fecha", vuelo.fecha)
-                                    InfoRowSimple(Icons.Default.Schedule, "Hora", vuelo.hora)
+                                    InfoRowSimple(
+                                        Icons.Default.CalendarToday,
+                                        "Fecha",
+                                        fechaPantalla(vuelo.fecha)
+                                    )
+
+                                    InfoRowSimple(
+                                        Icons.Default.Schedule,
+                                        "Hora",
+                                        vuelo.hora.take(5)
+                                    )
                                 }
+
                                 Spacer(modifier = Modifier.height(8.dp))
-                                InfoRowSimple(Icons.Default.EventSeat, "Cupos Libres", "$cupos / ${vuelo.cupos}")
+
+                                InfoRowSimple(
+                                    Icons.Default.EventSeat,
+                                    "Cupos Libres",
+                                    "$cupos / ${vuelo.cupos}"
+                                )
+
                                 Spacer(modifier = Modifier.height(14.dp))
+
                                 Button(
                                     onClick = {
                                         vueloSeleccionado = vuelo
+
                                         inscripcionViewModel.cargarPasajerosInscritos(
                                             context = context,
                                             jornadaId = vuelo.id
                                         )
                                     },
-                                    colors = ButtonDefaults.buttonColors(containerColor = BlueSecondary),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = BlueSecondary
+                                    ),
                                     shape = RoundedCornerShape(10.dp),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text("Ver pasajeros inscritos", fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "Ver pasajeros inscritos",
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
+
             pasajeroActual == null -> {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -199,11 +251,12 @@ fun VerInscritosScreen(
                 ) {
                     Column {
                         Text(
-                            text = "Vuelo: ${vueloActual.fecha} - ${vueloActual.hora}",
+                            text = "Vuelo: ${fechaPantalla(vueloActual.fecha)} - ${vueloActual.hora.take(5)}",
                             fontWeight = FontWeight.Bold,
                             color = BluePrimary,
                             fontSize = 15.sp
                         )
+
                         Text(
                             text = "Pasajeros inscritos: ${pasajeros.size}",
                             color = TextMuted,
@@ -213,6 +266,7 @@ fun VerInscritosScreen(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
+
                 if (pasajeros.isEmpty()) {
                     Box(
                         modifier = Modifier
@@ -220,10 +274,22 @@ fun VerInscritosScreen(
                             .fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Default.Info, null, tint = TextMuted, modifier = Modifier.size(44.dp))
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                Icons.Default.Info,
+                                null,
+                                tint = TextMuted,
+                                modifier = Modifier.size(44.dp)
+                            )
+
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text("No hay pasajeros inscritos en este vuelo.", color = TextMuted)
+
+                            Text(
+                                "No hay pasajeros inscritos en este vuelo.",
+                                color = TextMuted
+                            )
                         }
                     }
                 } else {
@@ -234,8 +300,12 @@ fun VerInscritosScreen(
                         items(pasajeros) { pasajero ->
                             Card(
                                 shape = RoundedCornerShape(16.dp),
-                                colors = CardDefaults.cardColors(containerColor = CardBg),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = CardBg
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 2.dp
+                                ),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Row(
@@ -244,7 +314,10 @@ fun VerInscritosScreen(
                                         .padding(16.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    val foto = pasajero.fotoPath?.let { BitmapFactory.decodeFile(it) }
+                                    val foto = pasajero.fotoPath?.let {
+                                        BitmapFactory.decodeFile(it)
+                                    }
+
                                     if (foto != null) {
                                         Image(
                                             bitmap = foto.asImageBitmap(),
@@ -258,41 +331,72 @@ fun VerInscritosScreen(
                                             modifier = Modifier
                                                 .size(60.dp)
                                                 .clip(CircleShape)
-                                                .background(BlueSecondary.copy(alpha = 0.1f)),
+                                                .background(
+                                                    BlueSecondary.copy(alpha = 0.1f)
+                                                ),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Icon(Icons.Default.Person, null, tint = BlueSecondary)
+                                            Icon(
+                                                Icons.Default.Person,
+                                                null,
+                                                tint = BlueSecondary
+                                            )
                                         }
                                     }
+
                                     Spacer(modifier = Modifier.width(14.dp))
-                                    Column(modifier = Modifier.weight(1f)) {
+
+                                    Column(
+                                        modifier = Modifier.weight(1f)
+                                    ) {
                                         Text(
                                             text = pasajero.nombre,
                                             fontWeight = FontWeight.Bold,
                                             color = TextDark,
                                             fontSize = 15.sp
                                         )
+
                                         Text(
                                             text = pasajero.email,
                                             color = TextMuted,
                                             fontSize = 12.sp
                                         )
+
                                         Spacer(modifier = Modifier.height(4.dp))
-                                        val consentText = if (pasajero.consentimientoAceptado) "Consentimiento: Aceptado" else "Consentimiento: Pendiente"
-                                        val consentColor = if (pasajero.consentimientoAceptado) StatusGreen else StatusOrange
+
+                                        val consentText =
+                                            if (pasajero.consentimientoAceptado)
+                                                "Consentimiento: Aceptado"
+                                            else
+                                                "Consentimiento: Pendiente"
+
+                                        val consentColor =
+                                            if (pasajero.consentimientoAceptado)
+                                                StatusGreen
+                                            else
+                                                StatusOrange
+
                                         Text(
                                             text = consentText,
                                             color = consentColor,
                                             fontSize = 11.sp,
                                             fontWeight = FontWeight.SemiBold
                                         )
+
                                         Spacer(modifier = Modifier.height(8.dp))
+
                                         OutlinedButton(
-                                            onClick = { pasajeroSeleccionado = pasajero },
+                                            onClick = {
+                                                pasajeroSeleccionado = pasajero
+                                            },
                                             shape = RoundedCornerShape(8.dp),
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Text("Cambiar vuelo", fontSize = 12.sp, color = BluePrimary)
+                                            Text(
+                                                "Cambiar vuelo",
+                                                fontSize = 12.sp,
+                                                color = BluePrimary
+                                            )
                                         }
                                     }
                                 }
@@ -302,18 +406,22 @@ fun VerInscritosScreen(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
+
                 Button(
                     onClick = {
                         vueloSeleccionado = null
                         pasajeroSeleccionado = null
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = BluePrimary
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Volver a selección de vuelos")
                 }
             }
+
             else -> {
                 Text(
                     text = "Cambiar vuelo de: ${pasajeroActual.nombre}",
@@ -321,23 +429,29 @@ fun VerInscritosScreen(
                     color = TextDark,
                     fontSize = 16.sp
                 )
+
                 Text(
-                    text = "Vuelo actual: ${vueloActual.fecha} - ${vueloActual.hora}",
+                    text = "Vuelo actual: ${fechaPantalla(vueloActual.fecha)} - ${vueloActual.hora.take(5)}",
                     color = TextMuted,
                     fontSize = 13.sp
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
+
                 val vuelosValidos = vuelos.filter { nuevoVuelo ->
-                    val cupos = jornadaViewModel.cuposDisponibles[nuevoVuelo.id] ?: nuevoVuelo.cupos
+                    val cupos = inscripcionViewModel.cuposBackend[nuevoVuelo.id] ?: 0
+
                     nuevoVuelo.id != vueloActual.id &&
                             cupos > 0 &&
-                            nuevoVuelo.estado == "Disponible" &&
-                            inscripcionViewModel.esFechaPosterior(vueloActual.fecha, vueloActual.hora,
+                            nuevoVuelo.estado == "DISPONIBLE" &&
+                            inscripcionViewModel.esFechaPosterior(
+                                vueloActual.fecha,
+                                vueloActual.hora,
                                 nuevoVuelo.fecha,
                                 nuevoVuelo.hora
                             )
                 }
+
                 if (vuelosValidos.isEmpty()) {
                     Box(
                         modifier = Modifier
@@ -357,46 +471,78 @@ fun VerInscritosScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         items(vuelosValidos) { nuevoVuelo ->
-                            val cupos = jornadaViewModel.cuposDisponibles[nuevoVuelo.id] ?: nuevoVuelo.cupos
+                            val cupos =
+                                inscripcionViewModel.cuposBackend[nuevoVuelo.id] ?: 0
+
                             Card(
                                 shape = RoundedCornerShape(16.dp),
-                                colors = CardDefaults.cardColors(containerColor = CardBg),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = CardBg
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 2.dp
+                                ),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Column(modifier = Modifier.padding(16.dp)) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        InfoRowSimple(Icons.Default.CalendarToday, "Fecha", nuevoVuelo.fecha)
-                                        InfoRowSimple(Icons.Default.Schedule, "Hora", nuevoVuelo.hora)
+                                        InfoRowSimple(
+                                            Icons.Default.CalendarToday,
+                                            "Fecha",
+                                            fechaPantalla(nuevoVuelo.fecha)
+                                        )
+
+                                        InfoRowSimple(
+                                            Icons.Default.Schedule,
+                                            "Hora",
+                                            nuevoVuelo.hora.take(5)
+                                        )
                                     }
+
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    InfoRowSimple(Icons.Default.EventSeat, "Cupos Libres", "$cupos cupos")
+
+                                    InfoRowSimple(
+                                        Icons.Default.EventSeat,
+                                        "Cupos Libres",
+                                        "$cupos cupos"
+                                    )
+
                                     Spacer(modifier = Modifier.height(12.dp))
+
                                     Button(
                                         onClick = {
                                             inscripcionViewModel.cambiarVuelo(
                                                 context = context,
                                                 inscripcionId = pasajeroActual.inscripcionId,
-                                                usuarioId = pasajeroActual.usuarioId,
                                                 nuevaJornadaId = nuevoVuelo.id,
                                                 onSuccess = {
-                                                    jornadaViewModel.cargarJornadas(context)
+                                                    jornadaViewModel.cargarVuelosBackend()
+
                                                     inscripcionViewModel.cargarPasajerosInscritos(
                                                         context = context,
                                                         jornadaId = vueloActual.id
                                                     )
+
+                                                    inscripcionViewModel.cargarCuposBackend(vuelos)
                                                     pasajeroSeleccionado = null
                                                 }
                                             )
                                         },
-                                        colors = ButtonDefaults.buttonColors(containerColor = StatusGreen),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = StatusGreen
+                                        ),
                                         shape = RoundedCornerShape(10.dp),
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Text("Confirmar cambio a este vuelo", fontWeight = FontWeight.Bold)
+                                        Text(
+                                            "Confirmar cambio a este vuelo",
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
                             }
@@ -405,20 +551,29 @@ fun VerInscritosScreen(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedButton(
-                    onClick = { pasajeroSeleccionado = null },
+                    onClick = {
+                        pasajeroSeleccionado = null
+                    },
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Cancelar cambio", color = TextMuted)
+                    Text(
+                        "Cancelar cambio",
+                        color = TextMuted
+                    )
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+
         Button(
             onClick = onNavigateToAdmin,
-            colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = BluePrimary
+            ),
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -429,19 +584,58 @@ fun VerInscritosScreen(
                 contentDescription = "Volver",
                 modifier = Modifier.size(18.dp)
             )
+
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Volver al panel principal", fontWeight = FontWeight.Bold)
+
+            Text(
+                "Volver al panel principal",
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
+
 @Composable
-private fun InfoRowSimple(icon: ImageVector, label: String, value: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(imageVector = icon, contentDescription = null, tint = BlueSecondary, modifier = Modifier.size(16.dp))
+private fun InfoRowSimple(
+    icon: ImageVector,
+    label: String,
+    value: String
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = BlueSecondary,
+            modifier = Modifier.size(16.dp)
+        )
+
         Spacer(modifier = Modifier.width(6.dp))
+
         Column {
-            Text(text = label, fontSize = 10.sp, color = TextMuted)
-            Text(text = value, fontSize = 13.sp, color = TextDark, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = label,
+                fontSize = 10.sp,
+                color = TextMuted
+            )
+
+            Text(
+                text = value,
+                fontSize = 13.sp,
+                color = TextDark,
+                fontWeight = FontWeight.SemiBold
+            )
         }
+    }
+}
+
+private fun fechaPantalla(fecha: String): String {
+    val partes = fecha.split("-")
+
+    return if (partes.size == 3) {
+        "${partes[2].toInt()}/${partes[1].toInt()}/${partes[0]}"
+    } else {
+        fecha
     }
 }

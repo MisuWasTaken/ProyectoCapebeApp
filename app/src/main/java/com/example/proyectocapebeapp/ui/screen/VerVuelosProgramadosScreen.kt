@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,11 +55,10 @@ fun VerVuelosProgramadosScreen(
     onNavigateToAdmin: () -> Unit,
     viewModel: JornadaViewModel = viewModel()
 ) {
-    val context = LocalContext.current
-    val vuelos = viewModel.jornadas
+    val vuelos = viewModel.vuelosBackend
 
     LaunchedEffect(Unit) {
-        viewModel.cargarJornadas(context)
+        viewModel.cargarVuelosBackend()
     }
 
     Column(
@@ -103,7 +101,11 @@ fun VerVuelosProgramadosScreen(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        if (vuelos.isEmpty()) {
+        if (viewModel.errorVuelos != null) {
+            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(text = viewModel.errorVuelos ?: "", color = StatusRed)
+            }
+        } else if (vuelos.isEmpty()) {
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -132,14 +134,19 @@ fun VerVuelosProgramadosScreen(
                 modifier = Modifier.weight(1f)
             ) {
                 items(vuelos) { vuelo ->
-                    val cuposDisponibles =
-                        viewModel.cuposDisponibles[vuelo.id] ?: vuelo.cupos
+                    val partes = vuelo.fecha.split("-")
+                    val fecha = if (partes.size == 3) {
+                        "${partes[2].toInt()}/${partes[1].toInt()}/${partes[0]}"
+                    } else {
+                        vuelo.fecha
+                    }
                     vueloItemCard(
-                        fecha = vuelo.fecha,
-                        hora = vuelo.hora,
+                        fecha = fecha,
+                        hora = vuelo.hora.take(5),
                         cuposTotales = vuelo.cupos,
-                        cuposDisponibles = cuposDisponibles,
-                        estado = vuelo.estado
+                        estado = vuelo.estado,
+                        origen = vuelo.origen,
+                        destino = vuelo.destino
                     )
                 }
             }
@@ -176,8 +183,9 @@ private fun vueloItemCard(
     fecha: String,
     hora: String,
     cuposTotales: Int,
-    cuposDisponibles: Int,
-    estado: String
+    estado: String,
+    origen: String,
+    destino: String
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -200,7 +208,14 @@ private fun vueloItemCard(
                     letterSpacing = 1.sp,
                     fontSize = 13.sp
                 )
-                val isDisponible = cuposDisponibles > 0
+                val isDisponible = estado == "DISPONIBLE"
+                val estadoTexto = when (estado) {
+                    "DISPONIBLE" -> "Disponible"
+                    "CERRADO" -> "Cerrado"
+                    "FINALIZADO" -> "Finalizado"
+                    "CANCELADO" -> "Cancelado"
+                    else -> estado
+                }
                 val chipBg = if (isDisponible) StatusGreen.copy(alpha = 0.12f) else StatusRed.copy(alpha = 0.12f)
                 val chipText = if (isDisponible) StatusGreen else StatusRed
                 Box(
@@ -210,7 +225,7 @@ private fun vueloItemCard(
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = if (isDisponible) estado.ifEmpty { "Disponible" } else "Agotado",
+                        text = estadoTexto,
                         color = chipText,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
@@ -235,9 +250,15 @@ private fun vueloItemCard(
             }
             Spacer(modifier = Modifier.height(12.dp))
             infoIconRow(
+                icon = Icons.Default.FlightTakeoff,
+                label = "Trayecto",
+                value = "$origen - $destino"
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            infoIconRow(
                 icon = Icons.Default.EventSeat,
-                label = "Disponibilidad",
-                value = "$cuposDisponibles de $cuposTotales cupos libres"
+                label = "Cupos del vuelo",
+                value = "$cuposTotales cupos"
             )
         }
     }

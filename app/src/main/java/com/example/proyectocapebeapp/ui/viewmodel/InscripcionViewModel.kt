@@ -1,3 +1,4 @@
+
 package com.example.proyectocapebeapp.ui.viewmodel
 
 import android.content.Context
@@ -6,151 +7,195 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.proyectocapebeapp.data.api.RetrofitInscripcion
+import com.example.proyectocapebeapp.data.api.RetrofitVuelo
 import com.example.proyectocapebeapp.data.database.AppDatabase
-import com.example.proyectocapebeapp.data.local.entity.InscripcionEntity
-import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
+import com.example.proyectocapebeapp.model.InscripcionRequest
 import com.example.proyectocapebeapp.model.PasajeroInscritoModel
+import com.example.proyectocapebeapp.model.VueloResponse
 import com.example.proyectocapebeapp.notification.NotificacionHelper
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class InscripcionViewModel : ViewModel() {
 
-    var misVuelos by mutableStateOf<List<JornadaEntity>>(emptyList())
+    var misVuelos by mutableStateOf<List<VueloResponse>>(emptyList())
         private set
 
     var mensaje by mutableStateOf<String?>(null)
         private set
 
-    var vuelosInscritos by mutableStateOf<List<Int>>(emptyList())
+    var vuelosInscritos by mutableStateOf<List<Long>>(emptyList())
         private set
 
-    var pasajerosInscritos by
-    mutableStateOf<List<PasajeroInscritoModel>>(emptyList())
+    var pasajerosInscritos by mutableStateOf<List<PasajeroInscritoModel>>(emptyList())
         private set
 
+    var cuposBackend by mutableStateOf<Map<Long, Int>>(emptyMap())
+        private set
 
     fun inscribirseEnVuelo(
         context: Context,
         usuarioId: Int,
-        jornadaId: Int,
+        jornadaId: Long,
+        fecha: String,
+        hora: String,
         onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
-            val db = AppDatabase.getDatabase(context)
-            val inscripcionExistente =
-                db.inscripcionDao()
-                    .obtenerInscripcion(usuarioId, jornadaId)
-            if (inscripcionExistente != null) {
-                mensaje = "Ya estas inscrito en este vuelo."
-                return@launch
-            }
-            val vuelo =
-                db.jornadaDao().obtenerJornadaPorId(jornadaId)
-            if (vuelo == null) {
-                mensaje = "El vuelo ya no esta disponible."
-                return@launch
-            }
-            val inscritos =
-                db.inscripcionDao().contarInscritos(jornadaId)
-            if (inscritos >= vuelo.cupos) {
-                mensaje = "Este vuelo ya no tiene cupos disponibles."
-                return@launch
-            }
-            val inscripcion = InscripcionEntity(
-                usuarioId = usuarioId,
-                jornadaId = jornadaId,
-                consentimientoAceptado = true
-            )
-            db.inscripcionDao().crearInscripcion(inscripcion)
-            val inscripcionGuardada =
-                db.inscripcionDao().obtenerInscripcion(
-                    usuarioId,
-                    jornadaId
+            mensaje = null
+            try {
+                val db = AppDatabase.getDatabase(context)
+                val usuario = db.usuarioDao().getUserById(usuarioId)
+
+                if (usuario == null) {
+                    mensaje = "Usuario no encontrado."
+                    return@launch
+                }
+
+                val request = InscripcionRequest(
+                    usuarioId = usuarioId.toLong(),
+                    vueloId = jornadaId,
+                    nombre = usuario.name,
+                    email = usuario.email,
+                    consentimientoAceptado = true
                 )
-            if (inscripcionGuardada != null) {
-                NotificacionHelper.programarRecordatorio(
-                    context = context,
-                    inscripcionId = inscripcionGuardada.id,
-                    fecha = vuelo.fecha,
-                    hora = vuelo.hora
-                )
+
+                val inscripcion = RetrofitInscripcion.api.crear(request)
+
+                vuelosInscritos = vuelosInscritos + jornadaId
+                onSuccess()
+
+                try {
+                    NotificacionHelper.programarRecordatorio(
+                        context = context,
+                        inscripcionId = inscripcion.id.toInt(),
+                        fecha = fecha,
+                        hora = hora
+                    )
+                } catch (e: Exception) {
+                    mensaje = "Inscripcion guardada, pero fallo el recordatorio."
+                }
+
+            } catch (e: HttpException) {
+                mensaje = when (e.code()) {
+                    409 -> "Ya estas inscrito o el vuelo no tiene cupos."
+                    400 -> "No se pudo realizar la inscripcion. Revisa los datos."
+                    503 -> "El servicio de vuelos no esta disponible."
+                    else -> "Error al inscribirse: ${e.code()}"
+                }
+            } catch (e: Exception) {
+                mensaje = "No se pudo conectar con el servicio de inscripciones."
             }
-            vuelosInscritos = vuelosInscritos + jornadaId
-            mensaje = "Te has inscrito correctamente a este vuelo."
-            onSuccess()
         }
     }
 
-    fun cargarVuelosInscritos(
-        context: Context,
-        usuarioId: Int
-    ) {
+    fun cargarVuelosInscritos(context: Context, usuarioId: Int) {
         viewModelScope.launch {
-            val db = AppDatabase.getDatabase(context)
-            val inscripciones =
-                db.inscripcionDao()
-                    .obtenerInscripcionesUsuario(usuarioId)
-            val vuelos = mutableListOf<Int>()
-            for (inscripcion in inscripciones) {
-                vuelos.add(inscripcion.jornadaId)
-            }
-            vuelosInscritos = vuelos
-        }
-    }
-    fun cargarMisVuelos(
-        context: Context,
-        usuarioId: Int
-    ) {
-        viewModelScope.launch {
-            val db = AppDatabase.getDatabase(context)
-            val inscripciones =
-                db.inscripcionDao()
-                    .obtenerInscripcionesUsuario(usuarioId)
-            val vuelos = mutableListOf<JornadaEntity>()
-            for (inscripcion in inscripciones) {
-                val vuelo =
-                    db.jornadaDao()
-                        .obtenerJornadaPorId(inscripcion.jornadaId)
-                if (vuelo != null) {
-                    vuelos.add(vuelo)
+            try {
+                val db = AppDatabase.getDatabase(context)
+                val usuario = db.usuarioDao().getUserById(usuarioId)
+
+                if (usuario == null) {
+                    mensaje = "Usuario no encontrado."
+                    return@launch
                 }
+
+                val inscripciones = RetrofitInscripcion.api.obtenerPorEmail(usuario.email)
+                vuelosInscritos = inscripciones.map { it.vueloId }
+                mensaje = null
+
+            } catch (e: Exception) {
+                mensaje = "No se pudieron consultar tus inscripciones."
             }
-            misVuelos = vuelos
         }
     }
-    fun cargarPasajerosInscritos(
-        context: Context,
-        jornadaId: Int
-    ) {
+
+    fun cargarMisVuelos(context: Context, usuarioId: Int) {
         viewModelScope.launch {
-            val db = AppDatabase.getDatabase(context)
-            val inscripciones =
-                db.inscripcionDao()
-                    .obtenerInscripcionesJornada(jornadaId)
-            val pasajeros =
-                mutableListOf<PasajeroInscritoModel>()
-            for (inscripcion in inscripciones) {
-                val usuario =
-                    db.usuarioDao()
-                        .getUserById(inscripcion.usuarioId)
-                if (usuario != null) {
-                    val pasajero = PasajeroInscritoModel(
-                        inscripcionId = inscripcion.id,
-                        usuarioId = usuario.id,
-                        nombre = usuario.name,
-                        email = usuario.email,
-                        jornadaId = jornadaId,
-                        fotoPath = usuario.fotoPath,
-                        consentimientoAceptado = inscripcion.consentimientoAceptado
+            try {
+                val db = AppDatabase.getDatabase(context)
+                val usuario = db.usuarioDao().getUserById(usuarioId)
+
+                if (usuario == null) {
+                    mensaje = "Usuario no encontrado."
+                    return@launch
+                }
+
+                val inscripciones = RetrofitInscripcion.api.obtenerPorEmail(usuario.email)
+                val ids = inscripciones.map { it.vueloId }
+
+                misVuelos = RetrofitVuelo.api.obtenerTodos()
+                    .filter { it.id in ids }
+
+                mensaje = null
+
+            } catch (e: Exception) {
+                mensaje = "No se pudieron cargar tus vuelos."
+            }
+        }
+    }
+
+    fun cargarCuposBackend(vuelos: List<VueloResponse>) {
+        viewModelScope.launch {
+            try {
+                val cupos = mutableMapOf<Long, Int>()
+
+                for (vuelo in vuelos) {
+                    val inscritos = RetrofitInscripcion.api.contarPorVuelo(vuelo.id)
+                    cupos[vuelo.id] = (vuelo.cupos - inscritos).coerceAtLeast(0)
+                }
+
+                cuposBackend = cupos
+
+            } catch (e: Exception) {
+                mensaje = "No se pudieron consultar los cupos disponibles."
+            }
+        }
+    }
+
+    fun cargarPasajerosInscritos(context: Context, jornadaId: Long) {
+        viewModelScope.launch {
+            pasajerosInscritos = emptyList()
+            try {
+                val inscripciones = RetrofitInscripcion.api.obtenerPorVuelo(jornadaId)
+                val db = AppDatabase.getDatabase(context)
+                val pasajeros = mutableListOf<PasajeroInscritoModel>()
+
+                for (inscripcion in inscripciones) {
+                    val usuario = db.usuarioDao().getUserById(inscripcion.usuarioId.toInt())
+
+                    val foto = if (usuario != null &&
+                        usuario.email.equals(inscripcion.email, ignoreCase = true)) {
+                        usuario.fotoPath
+                    } else {
+                        null
+                    }
+
+                    pasajeros.add(
+                        PasajeroInscritoModel(
+                            inscripcionId = inscripcion.id.toInt(),
+                            usuarioId = inscripcion.usuarioId.toInt(),
+                            nombre = inscripcion.nombre,
+                            email = inscripcion.email,
+                            jornadaId = inscripcion.vueloId.toInt(),
+                            fotoPath = foto,
+                            consentimientoAceptado = inscripcion.consentimientoAceptado
+                        )
                     )
-                    pasajeros.add(pasajero)
                 }
+
+                pasajerosInscritos = pasajeros
+                mensaje = null
+
+            } catch (e: Exception) {
+                mensaje = "No se pudieron cargar los pasajeros inscritos."
             }
-            pasajerosInscritos = pasajeros
         }
     }
+
     fun esFechaPosterior(
         fechaActual: String,
         horaActual: String,
@@ -158,72 +203,64 @@ class InscripcionViewModel : ViewModel() {
         nuevaHora: String
     ): Boolean {
         return try {
-            val formato =
-                SimpleDateFormat(
-                    "d/M/yyyy H:mm",
-                    Locale.getDefault()
-                )
+            val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
             formato.isLenient = false
-            val actual =
-                formato.parse(
-                    "$fechaActual $horaActual"
-                )
-            val nueva =
-                formato.parse(
-                    "$nuevaFecha $nuevaHora"
-                )
-            actual != null &&
-                    nueva != null &&
-                    nueva.after(actual)
+
+            val actual = formato.parse("$fechaActual $horaActual")
+            val nueva = formato.parse("$nuevaFecha $nuevaHora")
+
+            actual != null && nueva != null && nueva.after(actual)
         } catch (e: Exception) {
             false
         }
     }
+
     fun cambiarVuelo(
         context: Context,
         inscripcionId: Int,
-        usuarioId: Int,
-        nuevaJornadaId: Int,
+        nuevaJornadaId: Long,
         onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
-            val db = AppDatabase.getDatabase(context)
-            val nuevoVuelo =
-                db.jornadaDao()
-                    .obtenerJornadaPorId(nuevaJornadaId)
-            if (nuevoVuelo == null) {
-                mensaje = "El vuelo seleccionado ya no existe."
-                return@launch
+            mensaje = null
+            try {
+                RetrofitInscripcion.api.cambiarVuelo(
+                    inscripcionId.toLong(),
+                    mapOf("nuevoVueloId" to nuevaJornadaId)
+                )
+
+                mensaje = "Vuelo actualizado correctamente."
+                onSuccess()
+
+                try {
+                    val nuevoVuelo = RetrofitVuelo.api.obtenerTodos()
+                        .firstOrNull { it.id == nuevaJornadaId }
+
+                    if (nuevoVuelo != null) {
+                        val partes = nuevoVuelo.fecha.split("-")
+                        val fecha = "${partes[2].toInt()}/${partes[1].toInt()}/${partes[0]}"
+
+                        NotificacionHelper.programarRecordatorio(
+                            context = context,
+                            inscripcionId = inscripcionId,
+                            fecha = fecha,
+                            hora = nuevoVuelo.hora.take(5)
+                        )
+                    }
+                } catch (e: Exception) {
+                    mensaje = "Vuelo actualizado, pero fallo el recordatorio."
+                }
+
+            } catch (e: HttpException) {
+                mensaje = when (e.code()) {
+                    404 -> "La inscripcion no existe."
+                    409 -> "El vuelo no esta disponible, no tiene cupos o no es posterior."
+                    503 -> "El servicio de vuelos no esta disponible."
+                    else -> "Error al cambiar vuelo: ${e.code()}"
+                }
+            } catch (e: Exception) {
+                mensaje = "No se pudo conectar con el servicio de inscripciones."
             }
-            val inscritos =
-                db.inscripcionDao()
-                    .contarInscritos(nuevaJornadaId)
-            if (inscritos >= nuevoVuelo.cupos) {
-                mensaje = "El vuelo seleccionado ya no tiene cupos."
-                return@launch
-            }
-            val inscripcionExistente =
-                db.inscripcionDao()
-                    .obtenerInscripcion(
-                        usuarioId,
-                        nuevaJornadaId
-                    )
-            if (inscripcionExistente != null) {
-                mensaje = "El pasajero ya esta inscrito en ese vuelo."
-                return@launch
-            }
-            db.inscripcionDao().cambiarVuelo(
-                inscripcionId = inscripcionId,
-                nuevaJornadaId = nuevaJornadaId
-            )
-            NotificacionHelper.programarRecordatorio(
-                context = context,
-                inscripcionId = inscripcionId,
-                fecha = nuevoVuelo.fecha,
-                hora = nuevoVuelo.hora
-            )
-            mensaje = "Vuelo actualizado correctamente."
-            onSuccess()
         }
     }
 }

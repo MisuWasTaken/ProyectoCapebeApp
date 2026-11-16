@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.example.proyectocapebeapp"
         minSdk = 24
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -54,6 +54,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     val room_version = "2.8.4"
 
     implementation("androidx.room:room-runtime:$room_version")

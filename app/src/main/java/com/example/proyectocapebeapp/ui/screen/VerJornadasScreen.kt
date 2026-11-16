@@ -55,7 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
+import com.example.proyectocapebeapp.model.VueloResponse
 import com.example.proyectocapebeapp.ui.viewmodel.InscripcionViewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
 private val BluePrimary = Color(0xFF0D47A1)
@@ -76,20 +76,29 @@ fun VerJornadasScreen(
     inscripcionViewModel: InscripcionViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val jornadas = viewModel.jornadas
-    val jornadasDisponibles = jornadas.filter { jornada -> viewModel.esVueloFuturo(jornada.fecha, jornada.hora)
+    val jornadas = viewModel.vuelosBackend
+    val jornadasDisponibles = jornadas.filter { jornada ->
+        val partes = jornada.fecha.split("-")
+        val fecha = "${partes[2].toInt()}/${partes[1].toInt()}/${partes[0]}"
+        viewModel.esVueloFuturo(fecha, jornada.hora.take(5)) &&
+                jornada.estado == "DISPONIBLE"
     }
-    var jornadaSeleccionada by remember { mutableStateOf<JornadaEntity?>(null) }
+
+    var jornadaSeleccionada by remember { mutableStateOf<VueloResponse?>(null) }
     var consentimientoAceptado by remember { mutableStateOf(false) }
     val permisoNotificaciones = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {}
     LaunchedEffect(Unit) {
-        viewModel.cargarJornadas(context)
+        viewModel.cargarVuelosBackend()
         inscripcionViewModel.cargarVuelosInscritos(
             context = context,
             usuarioId = usuarioId
         )
+    }
+
+    LaunchedEffect(jornadas) {
+        inscripcionViewModel.cargarCuposBackend(jornadas)
     }
     Column(
         modifier = Modifier
@@ -132,6 +141,16 @@ fun VerJornadasScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+        val error = viewModel.errorVuelos ?: inscripcionViewModel.mensaje
+        if (error != null) {
+            Text(
+                text = error,
+                color = StatusRed,
+                fontSize = 13.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
         if (jornadasDisponibles.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -162,11 +181,13 @@ fun VerJornadasScreen(
             ) {
                 items(jornadasDisponibles) { jornada ->
                     val estaInscrito = inscripcionViewModel.vuelosInscritos.contains(jornada.id)
-                    val cupos = viewModel.cuposDisponibles[jornada.id] ?: jornada.cupos
+                    val cupos = inscripcionViewModel.cuposBackend[jornada.id] ?: 0
                     val sinCupos = cupos <= 0
+                    val partes = jornada.fecha.split("-")
+                    val fecha = "${partes[2].toInt()}/${partes[1].toInt()}/${partes[0]}"
                     JornadaCardItem(
-                        fecha = jornada.fecha,
-                        hora = jornada.hora,
+                        fecha = fecha,
+                        hora = jornada.hora.take(5),
                         cupos = cupos,
                         cuposTotales = jornada.cupos,
                         estado = jornada.estado,
@@ -261,6 +282,8 @@ fun VerJornadasScreen(
                                 context = context,
                                 usuarioId = usuarioId,
                                 jornadaId = vuelo.id,
+                                fecha = "${vuelo.fecha.substring(8, 10).toInt()}/${vuelo.fecha.substring(5, 7).toInt()}/${vuelo.fecha.substring(0, 4)}",
+                                hora = vuelo.hora.take(5),
                                 onSuccess = {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                                         ContextCompat.checkSelfPermission(
@@ -279,7 +302,7 @@ fun VerJornadasScreen(
                                     ).show()
                                     jornadaSeleccionada = null
                                     consentimientoAceptado = false
-                                    viewModel.cargarJornadas(context)
+                                    inscripcionViewModel.cargarCuposBackend(jornadas)
                                 }
                             )
                         }
@@ -349,7 +372,7 @@ private fun JornadaCardItem(
                 val chipLabel = when {
                     estaInscrito -> "Inscrito"
                     sinCupos -> "Agotado"
-                    else -> estado.ifEmpty { "Disponible" }
+                    else -> if (estado == "DISPONIBLE") "Disponible" else estado
                 }
                 Box(
                     modifier = Modifier

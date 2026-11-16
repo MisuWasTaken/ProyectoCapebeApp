@@ -103,6 +103,14 @@ fun MisVuelosScreen(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
+        if (viewModel.mensaje != null) {
+            Text(
+                text = viewModel.mensaje ?: "",
+                color = Color.Red,
+                fontSize = 13.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         if (vuelos.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -160,7 +168,7 @@ fun MisVuelosScreen(
                                         .padding(horizontal = 10.dp, vertical = 4.dp)
                                 ) {
                                     Text(
-                                        text = vuelo.estado.ifEmpty { "Confirmado" },
+                                        text = if (vuelo.estado == "DISPONIBLE") "Inscrito" else vuelo.estado,
                                         color = StatusGreen,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold
@@ -175,12 +183,14 @@ fun MisVuelosScreen(
                                 VueloInfoRow(
                                     icon = Icons.Default.CalendarToday,
                                     label = "Fecha",
-                                    value = vuelo.fecha
+                                    value = vuelo.fecha.split("-").let {
+                                        "${it[2].toInt()}/${it[1].toInt()}/${it[0]}"
+                                    }
                                 )
                                 VueloInfoRow(
                                     icon = Icons.Default.Schedule,
                                     label = "Hora",
-                                    value = vuelo.hora
+                                    value = vuelo.hora.take(5)
                                 )
                             }
                         }

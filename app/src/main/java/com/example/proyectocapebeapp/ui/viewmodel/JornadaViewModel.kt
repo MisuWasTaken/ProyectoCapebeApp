@@ -6,9 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.proyectocapebeapp.data.api.RetrofitVuelo
 import com.example.proyectocapebeapp.data.database.AppDatabase
 import com.example.proyectocapebeapp.data.local.entity.JornadaEntity
 import com.example.proyectocapebeapp.model.JornadaModel
+import com.example.proyectocapebeapp.model.VueloRequest
+import com.example.proyectocapebeapp.model.VueloResponse
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -23,6 +26,30 @@ class JornadaViewModel : ViewModel() {
 
     var cuposDisponibles by mutableStateOf<Map<Int, Int>>(emptyMap())
         private set
+
+    var vuelosBackend by mutableStateOf<List<VueloResponse>>(emptyList())
+        private set
+
+    var errorVuelos by mutableStateOf<String?>(null)
+        private set
+
+    var origen by mutableStateOf("")
+        private set
+
+    var destino by mutableStateOf("")
+        private set
+
+    fun cargarVuelosBackend() {
+        viewModelScope.launch {
+            try {
+                vuelosBackend = RetrofitVuelo.api.obtenerTodos()
+                errorVuelos = null
+            } catch (e: Exception) {
+                errorVuelos = "No se pudieron cargar los vuelos."
+            }
+        }
+    }
+
     fun cargarJornadas(context: Context) {
 
         viewModelScope.launch {
@@ -64,10 +91,17 @@ class JornadaViewModel : ViewModel() {
         )
     }
 
-    fun esVueloFuturo(
-        fecha: String,
-        hora: String
-    ): Boolean {
+    fun onOrigenChanged(valor: String) {
+        origen = valor
+        uiState = uiState.copy(errorMessage = null)
+    }
+
+    fun onDestinoChanged(valor: String) {
+        destino = valor
+        uiState = uiState.copy(errorMessage = null)
+    }
+
+    fun esVueloFuturo(fecha: String, hora: String): Boolean {
         return try {
             val formato = SimpleDateFormat(
                 "d/M/yyyy H:mm",
@@ -81,15 +115,14 @@ class JornadaViewModel : ViewModel() {
         }
     }
 
-    fun onCrearJornadaClick(
-        context: Context,
-        onSuccess: () -> Unit
-    ) {
+    fun onCrearJornadaClick(onSuccess: () -> Unit) {
 
         if (
             uiState.fecha.isBlank() ||
             uiState.hora.isBlank() ||
-            uiState.cupos.isBlank()
+            uiState.cupos.isBlank() ||
+            origen.isBlank() ||
+            destino.isBlank()
         ) {
             uiState = uiState.copy(
                 errorMessage = "Los campos no pueden estar vacios."
@@ -114,15 +147,24 @@ class JornadaViewModel : ViewModel() {
         }
 
         viewModelScope.launch {
-            val db = AppDatabase.getDatabase(context)
-            val jornada = JornadaEntity(
-                fecha = uiState.fecha,
-                hora = uiState.hora,
-                cupos = cuposNumero,
-                estado = "Disponible"
-            )
-            db.jornadaDao().crearJornada(jornada)
-            onSuccess()
+            try {
+                val fechaPartes = uiState.fecha.split("/")
+                val horaPartes = uiState.hora.split(":")
+                val fecha = "${fechaPartes[2]}-${fechaPartes[1].padStart(2, '0')}-${fechaPartes[0].padStart(2, '0')}"
+                val hora = "${horaPartes[0].padStart(2, '0')}:${horaPartes[1].padStart(2, '0')}:00"
+
+                val request = VueloRequest(fecha, hora, cuposNumero, origen.trim(), destino.trim())
+                RetrofitVuelo.api.crear(request)
+
+                uiState = JornadaModel()
+                origen = ""
+                destino = ""
+                onSuccess()
+            } catch (e: Exception) {
+                uiState = uiState.copy(
+                    errorMessage = "Error: ${e.message}"
+                )
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -92,6 +94,7 @@ fun CrearJornadaScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BlueBackground)
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -121,7 +124,7 @@ fun CrearJornadaScreen(
             )
         )
         Text(
-            text = "Establece fecha, horario y cupos disponibles",
+            text = "Establece fecha, horario, cupos y trayecto",
             style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
         )
 
@@ -194,6 +197,26 @@ fun CrearJornadaScreen(
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = viewModel.origen,
+                    onValueChange = { viewModel.onOrigenChanged(it) },
+                    label = { Text("Origen") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = viewModel.destino,
+                    onValueChange = { viewModel.onDestinoChanged(it) },
+                    label = { Text("Destino") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
                 if (state.errorMessage != null) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
@@ -210,7 +233,6 @@ fun CrearJornadaScreen(
         Button(
             onClick = {
                 viewModel.onCrearJornadaClick(
-                    context = context,
                     onSuccess = {
                         Toast.makeText(
                             context,
