@@ -165,6 +165,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
             Button(
+                enabled = !viewModel.cargando,
                 onClick = {
                     viewModel.onRegisterClick(context = context) {
                         Toast.makeText(
@@ -182,7 +183,7 @@ fun RegisterScreen(
                     .height(50.dp)
             ) {
                 Text(
-                    text = "Registrarse",
+                    text = if (viewModel.cargando) "Registrando..." else "Registrarse",
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp
                 )
