@@ -18,6 +18,11 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.text.SimpleDateFormat
 import java.util.Locale
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import com.example.proyectocapebeapp.data.api.RetrofitSupabaseAuth
+import com.example.proyectocapebeapp.data.api.SesionSupabase
+import kotlinx.coroutines.CancellationException
 
 class InscripcionViewModel : ViewModel() {
 
@@ -155,25 +160,14 @@ class InscripcionViewModel : ViewModel() {
             }
         }
     }
-
     fun cargarPasajerosInscritos(context: Context, jornadaId: Long) {
         viewModelScope.launch {
             pasajerosInscritos = emptyList()
             try {
-                val inscripciones = RetrofitInscripcion.api.obtenerPorVuelo(jornadaId)
-                val db = AppDatabase.getDatabase(context)
+                val inscripciones =
+                    RetrofitInscripcion.api.obtenerPorVuelo(jornadaId)
                 val pasajeros = mutableListOf<PasajeroInscritoModel>()
-
                 for (inscripcion in inscripciones) {
-                    val usuario = db.usuarioDao().getUserById(inscripcion.usuarioId.toInt())
-
-                    val foto = if (usuario != null &&
-                        usuario.email.equals(inscripcion.email, ignoreCase = true)) {
-                        usuario.fotoPath
-                    } else {
-                        null
-                    }
-
                     pasajeros.add(
                         PasajeroInscritoModel(
                             inscripcionId = inscripcion.id.toInt(),
@@ -181,18 +175,44 @@ class InscripcionViewModel : ViewModel() {
                             nombre = inscripcion.nombre,
                             email = inscripcion.email,
                             jornadaId = inscripcion.vueloId.toInt(),
-                            fotoPath = foto,
-                            consentimientoAceptado = inscripcion.consentimientoAceptado
+                            consentimientoAceptado = inscripcion.consentimientoAceptado,
+                            usuarioAuthId = inscripcion.usuarioAuthId
                         )
                     )
                 }
-
                 pasajerosInscritos = pasajeros
                 mensaje = null
-
             } catch (e: Exception) {
                 mensaje = "No se pudieron cargar los pasajeros inscritos."
             }
+        }
+    }
+
+    suspend fun obtenerFotoPasajero(usuarioAuthId: String?): Bitmap? {
+        val token = SesionSupabase.accessToken ?: return null
+        if (usuarioAuthId.isNullOrBlank()) return null
+        return try {
+            val respuesta = RetrofitSupabaseAuth.api.obtenerFoto(
+                autorizacion = "Bearer $token",
+                archivo = "$usuarioAuthId.jpg"
+            )
+            if (respuesta.isSuccessful) {
+                val datos = respuesta.body()?.use {
+                    it.bytes()
+                }
+                if (datos != null) {
+                    BitmapFactory.decodeByteArray(datos, 0, datos.size)
+                } else {
+                    null
+                }
+            } else {
+                respuesta.errorBody()?.close()
+                null
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            null
         }
     }
 

@@ -1,3 +1,4 @@
+
 package com.example.proyectocapebeapp.data.api
 
 import okhttp3.OkHttpClient
@@ -7,12 +8,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitInscripcion {
 
     private const val BASE_URL = "http://10.0.2.2:8082/"
-
     private val cliente = OkHttpClient.Builder()
         .addInterceptor { cadena ->
-            val token = SesionSupabase.accessToken
+            val token = SesionSupabase.tokenVigente()
             val peticion = cadena.request().newBuilder()
-            if (token != null) peticion.header("Authorization", "Bearer $token")
+
+            if (token != null) {
+                peticion.header("Authorization", "Bearer $token")
+            }
             cadena.proceed(peticion.build())
         }
         .build()

@@ -1,3 +1,4 @@
+
 package com.example.proyectocapebeapp.data.api
 
 import okhttp3.OkHttpClient
@@ -10,9 +11,13 @@ object RetrofitVuelo {
 
     private val cliente = OkHttpClient.Builder()
         .addInterceptor { cadena ->
-            val token = SesionSupabase.accessToken
+            val token = SesionSupabase.tokenVigente()
             val peticion = cadena.request().newBuilder()
-            if (token != null) peticion.header("Authorization", "Bearer $token")
+
+            if (token != null) {
+                peticion.header("Authorization", "Bearer $token")
+            }
+
             cadena.proceed(peticion.build())
         }
         .build()

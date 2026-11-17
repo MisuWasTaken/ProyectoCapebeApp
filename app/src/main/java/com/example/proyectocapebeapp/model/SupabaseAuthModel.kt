@@ -17,6 +17,7 @@ data class SupabaseRegistroRequest(
 data class SupabaseAuthResponse(
     @SerializedName("access_token") val accessToken: String? = null,
     @SerializedName("refresh_token") val refreshToken: String? = null,
+    @SerializedName("expires_in") val expiresIn: Long = 3600,
     val user: SupabaseUsuario? = null
 )
 

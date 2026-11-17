@@ -25,6 +25,7 @@ import com.example.proyectocapebeapp.ui.screen.VerInscritosScreen
 import com.example.proyectocapebeapp.ui.screen.VerVuelosProgramadosScreen
 import com.example.proyectocapebeapp.ui.screen.FotoIdentificacionScreen
 import com.example.proyectocapebeapp.ui.screen.RegistrarEmbarqueScreen
+import com.example.proyectocapebeapp.data.api.SesionSupabase
 
 object Routes {
     const val LOGIN = "login"
@@ -107,6 +108,8 @@ fun AppNavigation() {
         composable(Routes.INVITADO_HOME) {
             InvitadoHomeScreen(
                 onNavigateToLogin = {
+                    SesionSupabase.cerrar()
+                    usuarioIdActual = 0
                     navController.popBackStack()
                 },
                 onNavigateToVerJornadas = {
@@ -133,6 +136,8 @@ fun AppNavigation() {
         composable(Routes.ADMIN_HOME) {
             AdminHomeScreen(
                 onNavigateToLogin = {
+                    SesionSupabase.cerrar()
+                    usuarioIdActual = 0
                     navController.popBackStack()
                 },
                 onNavigateToCrearJornada = {

@@ -63,6 +63,8 @@ class LoginViewModel : ViewModel() {
 
                 val token = respuesta.accessToken
                 val cuenta = respuesta.user
+                val refreshToken = respuesta.refreshToken
+                    ?: throw IllegalStateException("Sesion no valida.")
 
                 if (token.isNullOrBlank() || cuenta == null) {
                     errorMessage = "No se pudo iniciar sesion."
@@ -84,7 +86,12 @@ class LoginViewModel : ViewModel() {
                 when (perfil.rol) {
 
                     "Administrador" -> {
-                        SesionSupabase.iniciar(token, cuenta.id)
+                        SesionSupabase.iniciar(
+                            token,
+                            cuenta.id,
+                            refreshToken,
+                            respuesta.expiresIn
+                        )
                         onAdminSuccess()
                     }
 
@@ -107,7 +114,12 @@ class LoginViewModel : ViewModel() {
                         }
 
                         if (usuario != null) {
-                            SesionSupabase.iniciar(token, cuenta.id)
+                            SesionSupabase.iniciar(
+                                token,
+                                cuenta.id,
+                                refreshToken,
+                                respuesta.expiresIn
+                            )
                             onInvitadoSuccess(usuario.id)
                         } else {
                             errorMessage = "No se pudo cargar el usuario."

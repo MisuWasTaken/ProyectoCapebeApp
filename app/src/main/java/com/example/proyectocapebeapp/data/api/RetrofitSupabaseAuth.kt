@@ -1,3 +1,4 @@
+
 package com.example.proyectocapebeapp.data.api
 
 import okhttp3.OkHttpClient
@@ -9,12 +10,24 @@ object RetrofitSupabaseAuth {
     private const val BASE_URL = "https://arwwmnqyjidfiuwypgsc.supabase.co/"
     private const val API_KEY = "sb_publishable_ipVyMa4LIzG7MNwWVLSJgA_L3KVpskM"
 
-    private val cliente = OkHttpClient.Builder()
+    private val cliente: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor { cadena ->
-            val peticion = cadena.request().newBuilder()
-                .addHeader("apikey", API_KEY)
-                .build()
-            cadena.proceed(peticion)
+            val original = cadena.request()
+
+            val peticion = original.newBuilder()
+                .header("apikey", API_KEY)
+
+            if (original.url().encodedPath().startsWith("/storage/v1/")) {
+                val token = SesionSupabase.tokenVigente()
+
+                if (token != null) {
+                    peticion.header("Authorization", "Bearer $token")
+                } else {
+                    peticion.removeHeader("Authorization")
+                }
+            }
+
+            cadena.proceed(peticion.build())
         }
         .build()
 

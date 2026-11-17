@@ -1,3 +1,4 @@
+
 package com.example.proyectocapebeapp.model
 
 data class PasajeroInscritoModel(
@@ -6,6 +7,6 @@ data class PasajeroInscritoModel(
     val nombre: String,
     val email: String,
     val jornadaId: Int,
-    val fotoPath: String? = null,
-    val consentimientoAceptado: Boolean
+    val consentimientoAceptado: Boolean,
+    val usuarioAuthId: String? = null
 )

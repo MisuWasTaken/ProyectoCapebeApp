@@ -1,3 +1,4 @@
+
 package com.example.proyectocapebeapp.model
 
 data class InscripcionResponse(
@@ -6,5 +7,6 @@ data class InscripcionResponse(
     val vueloId: Long,
     val nombre: String,
     val email: String,
-    val consentimientoAceptado: Boolean
+    val consentimientoAceptado: Boolean,
+    val usuarioAuthId: String? = null
 )

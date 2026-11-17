@@ -157,6 +157,7 @@ fun FotoIdentificacionScreen(
 
         Spacer(modifier = Modifier.height(28.dp))
         Button(
+            enabled = !viewModel.cargando,
             onClick = {
                 launcherCamara.launch(null)
             },

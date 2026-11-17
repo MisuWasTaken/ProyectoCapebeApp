@@ -1,7 +1,7 @@
 
 package com.example.proyectocapebeapp.ui.screen
 
-import android.graphics.BitmapFactory
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -314,10 +314,15 @@ fun VerInscritosScreen(
                                         .padding(16.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    val foto = pasajero.fotoPath?.let {
-                                        BitmapFactory.decodeFile(it)
+                                    var fotoCargada by remember(pasajero.usuarioAuthId) {
+                                        mutableStateOf<Bitmap?>(null)
                                     }
-
+                                    LaunchedEffect(pasajero.usuarioAuthId) {
+                                        fotoCargada = inscripcionViewModel.obtenerFotoPasajero(
+                                            pasajero.usuarioAuthId
+                                        )
+                                    }
+                                    val foto = fotoCargada
                                     if (foto != null) {
                                         Image(
                                             bitmap = foto.asImageBitmap(),
