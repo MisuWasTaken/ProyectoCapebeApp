@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInscripcion {
 
-    private const val BASE_URL = "http://10.0.2.2:8082/"
+    private const val BASE_URL = "https://proyectocapebebackend.onrender.com/"
     private val cliente = OkHttpClient.Builder()
         .addInterceptor { cadena ->
             val token = SesionSupabase.tokenVigente()

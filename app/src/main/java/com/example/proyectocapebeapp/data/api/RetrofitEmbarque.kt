@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitEmbarque {
 
-    private const val BASE_URL = "http://10.0.2.2:8083/"
+    private const val BASE_URL = "https://capebe-operaciones.onrender.com/"
 
     private val cliente = OkHttpClient.Builder()
         .addInterceptor { cadena ->
