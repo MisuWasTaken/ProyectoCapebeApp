@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectocapebeapp.ui.viewmodel.JornadaViewModel
 import java.util.Calendar
+import androidx.compose.foundation.layout.imePadding
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueSecondary = Color(0xFF1976D2)
 private val BlueBackground = Color(0xFFF4F7FA)
@@ -94,10 +95,9 @@ fun CrearJornadaScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BlueBackground)
+            .imePadding()
             .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
         Box(
             modifier = Modifier

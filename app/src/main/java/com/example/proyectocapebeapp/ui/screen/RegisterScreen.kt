@@ -42,6 +42,9 @@ import com.example.proyectocapebeapp.ui.components.Footer
 import com.example.proyectocapebeapp.ui.components.Header
 import com.example.proyectocapebeapp.ui.viewmodel.RegisterViewModel
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
 private val BluePrimary = Color(0xFF0D47A1)
 private val BlueBackground = Color(0xFFF4F7FA)
 private val CardBg = Color(0xFFFFFFFF)
@@ -57,6 +60,7 @@ fun RegisterScreen(
     val state = viewModel.uiState
     val context = LocalContext.current
     Scaffold(
+        modifier = Modifier.imePadding(),
         topBar = { Header(title = "REGISTRO DE USUARIO") },
         bottomBar = { Footer() }
     ) { innerPadding ->
@@ -65,9 +69,8 @@ fun RegisterScreen(
                 .fillMaxSize()
                 .background(BlueBackground)
                 .padding(paddingValues = innerPadding)
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
             Box(
                 modifier = Modifier
